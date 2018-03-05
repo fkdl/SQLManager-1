@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "SQL Manager";
+}
+
+<div class="container">
+    <div class="row">
+        <h1>
+            Welcome to SQL Manager
+        </h1>
+    </div>
+
+    <div id="SQLType">
+        <div class="row">
+            <h3>
+                Please select you SQL instance type
+            </h3>
+        </div>
+
+        <div class="row">
+            <form method="post" id="SelectSQL" onsubmit="return SelectSQL()">
+                <div class="radio">
+                    <label><input type="radio" name="sql" value="SQLServer" checked />SQl Server</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="sql" value="MySQL" />MySql</label>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="sql" value="SQLite" />SQLite</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="SQLServer" class="hidden">
+        <div class="row">
+            <form method="post" role="form" asp-controller="test" asp-action="test" autocomplete="off">
+                <legend>SQl Server's connection data</legend>
+
+                <div class="form-group">
+                    <label>SQL Server location</label>
+                    <input type="text" class="form-control" name="_server" placeholder="IP or Domain" />
+                </div>
+
+                <div class="form-group">
+                    <label>User name</label>
+                    <input type="text" class="form-control" name="_user" />
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" name="_pass" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Connect</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="MySQL" class="hidden">
+        <div class="row">
+            <form method="post" role="form" asp-controller="test" asp-action="test" autocomplete="off">
+                <legend>MySQL's connection data</legend>
+
+                <div class="form-group">
+                    <label>MySQL location</label>
+                    <input type="text" class="form-control" name="_server" placeholder="IP or Domain" />
+                </div>
+
+                <div class="form-group">
+                    <label>User name</label>
+                    <input type="text" class="form-control" name="_user" />
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" name="_pass" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Connect</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="SQLite" class="hidden">
+        <div class="row">
+            <form method="post" role="form" asp-controller="test" asp-action="test" autocomplete="off">
+                <legend>SQLite's connection data</legend>
+
+                <div class="form-group">
+                    <label>File path</label>
+                    <input type="text" class="form-control" name="_server" placeholder="Provide full path" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Connect</button>
+            </form>
+        </div>
+    </div>
+
+</div>
