@@ -5,6 +5,7 @@
 function SelectSQL() {
     var _Selection = $("#SelectSQL input[type='radio']:checked").val();
 
+    $("#HomeError").hide();
     $("#SQLType").hide();
 
     if (_Selection == "SQLServer") {
@@ -21,4 +22,11 @@ function SelectSQL() {
     }
 
     return false;
+}
+
+function BackToServerTypes() {
+    $("#SQLType").show();
+    $("#SQLServer").addClass("hidden");
+    $("#MySQL").addClass("hidden");
+    $("#SQLite").addClass("hidden");
 }
