@@ -7,10 +7,12 @@
     @foreach (var _table in Model)
     {
         <div class="col-xs-3">
-            <div class="panel panel-primary" style="border-radius: 0;">
+            <div class="panel panel-info" style="border-radius: 0;">
                 <div class="panel-heading" style="border-radius: 0;">
                     @_table.Key
-                    <i class="fas fa-angle-double-right pull-right" style="font-size: 120%"></i>
+                    <a asp-action="Index" asp-controller="Table" asp-route-Name="@_table.Key" class="pull-right">
+                        <i class="fas fa-angle-double-right" style="font-size: 120%"></i>
+                    </a>
                 </div>
                 <div class="panel-body" style="border-radius: 0;">
                     @foreach (var _column in _table.Value)

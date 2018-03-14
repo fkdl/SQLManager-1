@@ -1,0 +1,10 @@
+@model DataTable
+
+@{ ViewData["Title"] = "Table Data"; }
+
+@{
+    foreach (var _column in Model.Columns)
+    {
+        <p>@_column</p>
+    }
+}
