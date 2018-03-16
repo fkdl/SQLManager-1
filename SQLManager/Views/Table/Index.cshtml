@@ -1,10 +1,30 @@
-@model DataTable
+@using System.Data;
+@model System.Data.DataTable
 
 @{ ViewData["Title"] = "Table Data"; }
 
-@{
-    foreach (var _column in Model.Columns)
-    {
-        <p>@_column</p>
-    }
-}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                @{
+                    foreach (DataColumn _column in Model.Columns)
+                    {
+                        <th>@(_column.ColumnName)</th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+                @foreach (DataRow _row in Model.Rows)
+                {
+                    <tr>
+                        @foreach (DataColumn _col in Model.Columns)
+                        {
+                            <td>@(_row[_col.ColumnName])</td>
+                        }
+                    </tr>
+                }
+        </tbody>
+    </table>
+</div>

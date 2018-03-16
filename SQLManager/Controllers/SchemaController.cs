@@ -28,9 +28,9 @@ namespace SQLManager.Controllers
                                                  FROM sqlite_master
                                                  WHERE type = 'table'
                                                  AND tbl_name NOT LIKE '%sqlite%'";
-                        using (var _reader = _TableCommand.ExecuteReader())
+                        using (var _reader = await _TableCommand.ExecuteReaderAsync())
                         {
-                            while (_reader.Read())
+                            while (await _reader.ReadAsync())
                             {
                                 _Tables.Add(_reader.GetString(0));
                             }
@@ -42,11 +42,12 @@ namespace SQLManager.Controllers
 
                             var _ColumnsCommand = _conn.CreateCommand();
                             _ColumnsCommand.Transaction = _transaction;
-                            _ColumnsCommand.CommandText = @"PRAGMA table_info('" + _element + "');";
+                            _ColumnsCommand.CommandText = @"PRAGMA table_info('$table');";
+                            _ColumnsCommand.Parameters.AddWithValue("$table", _element);
 
-                            using (var _reader = _ColumnsCommand.ExecuteReader())
+                            using (var _reader = await _ColumnsCommand.ExecuteReaderAsync())
                             {
-                                while (_reader.Read())
+                                while (await _reader.ReadAsync())
                                 {
                                     _TmpList.Add(new Tuple<string, string, string>(
                                         _reader.GetString(1),
