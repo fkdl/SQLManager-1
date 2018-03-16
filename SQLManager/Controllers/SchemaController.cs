@@ -42,8 +42,7 @@ namespace SQLManager.Controllers
 
                             var _ColumnsCommand = _conn.CreateCommand();
                             _ColumnsCommand.Transaction = _transaction;
-                            _ColumnsCommand.CommandText = @"PRAGMA table_info('$table');";
-                            _ColumnsCommand.Parameters.AddWithValue("$table", _element);
+                            _ColumnsCommand.CommandText = @"PRAGMA table_info('" + _element + "');";
 
                             using (var _reader = await _ColumnsCommand.ExecuteReaderAsync())
                             {

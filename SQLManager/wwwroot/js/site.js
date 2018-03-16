@@ -30,3 +30,9 @@ function BackToServerTypes() {
     $("#MySQL").addClass("hidden");
     $("#SQLite").addClass("hidden");
 }
+//
+// Add data to table
+//
+function AddLine(key) {
+    
+}
