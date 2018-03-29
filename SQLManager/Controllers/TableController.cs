@@ -88,45 +88,24 @@ namespace SQLManager.Controllers
         }
 
         [HttpPost]
-        public void Add(string InsertData)
+        public async void Add(string InsertData, string FieldNames)
         {
-            var _test = InsertData.Split(',');
-
-            var _fin = "";
-
-            foreach (var item in _test)
+            if (Extensions.Connection[0].Equals("SQLite"))
             {
-                _fin += item;
+                using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                {
+                    await _conn.OpenAsync();
+
+                    using (var _transaction = _conn.BeginTransaction())
+                    {
+                        var _Command = _conn.CreateCommand();
+                        _Command.Transaction = _transaction;
+                        _Command.CommandText = @"INSERT INTO ";
+
+                        //await _Command.ExecuteNonQueryAsync();
+                    }
+                }
             }
-
-            Console.WriteLine(_fin);
-            // if (Extensions.Connection[0].Equals("SQLite"))
-            // {
-            //     using (var _conn = new SqliteConnection(Extensions.Connection[1]))
-            //     {
-            //         await _conn.OpenAsync();
-
-            //         using (var _transaction = _conn.BeginTransaction())
-            //         {
-            //             var _Command = _conn.CreateCommand();
-            //             _Command.Transaction = _transaction;
-            //             _Command.CommandText = @"PRAGMA table_info('" + Name + "');";
-
-            //             using (var _reader = await _Command.ExecuteReaderAsync())
-            //             {
-            //                 while (await _reader.ReadAsync())
-            //                 {
-            //                     _Data.Columns.Add(_reader.GetString(1));
-
-            //                     if (_reader.GetInt32(5) == 1)
-            //                     {
-            //                         _PrimaryKey = _reader.GetString(1);
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
         }
     }
 }

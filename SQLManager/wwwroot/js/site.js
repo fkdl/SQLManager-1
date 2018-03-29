@@ -40,38 +40,51 @@ function ResetAddLine() {
 }
 
 function AddLine() {
-    var _insert = '"' + document.getElementById("addLineForm").elements[0].value + '"';
-
-    for(i = 1; i < document.getElementById("addLineForm").elements.length - 1; i++)
+    var _form = document.getElementById("addLineForm");
+    var _insert = "";
+    var _id = "";
+    var counter = 0;
+    //
+    // Get first element with value
+    //
+    for(i = 0; i < _form.elements.length - 1; i++)
     {
-        _insert += ', "' + document.getElementById("addLineForm").elements[i].value + '"';
+        if (_form.elements[i].value.length > 0) {
+            _insert = _form.elements[i].value;
+            _id = _form.elements[i].id;
+            counter = i + 1;
+            break;
+        }
+    }
+    //
+    // Get rest elements with values
+    //
+    for(i = counter; i < _form.elements.length - 1; i++)
+    {
+        if (_form.elements[i].value.length > 0) {
+            _insert += ", " + _form.elements[i].value;
+            _id += ", " + _form.elements[i].id;
+        }
     }
 
     $("#addLineForm").hide();
     $("#addLineWork").removeClass("hidden");
     $("#addLineWork").show();
 
-    // $.ajax({
-
-    //     url:$(this).attr("href"), // comma here instead of semicolon   
-    //     success: function(){
-    //     alert("Value Added");  // or any other indication if you want to show
-    //     }
-    // });
-
     var ToSend = 
     {
-        InsertData: _insert
+        InsertData: _insert,
+        FieldNames: _id
     };
 
     $.ajax({
-        url: "Add",
+        url: "/Table/Add",
         type: "POST",
-        data: JSON.stringify(ToSend),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
+        data: ToSend,
+        //contentType: "application/json; charset=utf-8",
+        //dataType: "json",
         success: function(data) {
-            alert("Komple");
+            //alert("Komple");
             location.reload();
         }
     })
