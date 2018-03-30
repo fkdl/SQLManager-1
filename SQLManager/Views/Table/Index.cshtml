@@ -1,10 +1,11 @@
 @using System.Data;
 @model System.Data.DataTable
+@{int line = 1;}
 
 <div class="container" style="margin-top: 2vh;">
     <div class="row">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover" id="LinesTable">
                 <thead>
                     <tr>
                         <th></th>
@@ -17,9 +18,10 @@
                 <tbody>
                         @foreach (DataRow _row in Model.Rows)
                         {
+                            var _lineId = "line" + line.ToString();
                             <tr>
                                 <td style="white-space: nowrap; width: 1%;">
-                                    <a data-toggle="modal" data-target="#editLine">
+                                    <a data-toggle="modal" data-target="#editLine" onclick="EditLineData(@(line))">
                                         <i class="far fa-edit" style="font-size: 115%;"></i>
                                     </a>
                                     <i class="far fa-trash-alt" style="font-size: 115%;"></i>
@@ -30,6 +32,8 @@
                                     <td style="white-space: nowrap; width: 1%;">@(_row[_col.ColumnName])</td>
                                 }
                             </tr>
+
+                            line++;
                         }
                 </tbody>
             </table>
@@ -37,13 +41,15 @@
     </div>
     <hr />
     <div class="row">
-        <a class="btn btn-primary col-xs-1" role="button" data-toggle="modal" data-target="#addLine" onclick="ResetAddLine()">
+        <a class="btn btn-primary col-xs-1" role="button" data-toggle="modal" data-target="#addLine" onclick="ResetLine('Add')">
             Add line
         </a>
         <a class="btn btn-primary col-xs-1" role="button" asp-action="Index" asp-controller="Schema" style="margin-left: 1vw;">
             Back
         </a>
     </div>
+
+    <input type="hidden" id="TableName" value="@(ViewBag.Table)">
 </div>
 
 <!-- Add line modal -->
@@ -54,7 +60,7 @@
                 <h3 class="modal-title">Add new Data</h3>
             </div>
             <div class="modal-body" id="addModalBody">
-                <form class="form-horizontal" onsubmit="return AddLine()" id="addLineForm" autocomplete="off">
+                <form class="form-horizontal" onsubmit="return Line('Add')" id="addLineForm" autocomplete="off">
                     @foreach (DataColumn _column in Model.Columns)
                     {
                         @if (ViewBag.AutoInc != _column.ColumnName)
@@ -67,7 +73,6 @@
                             </div>
                         }
                     }
-                    <input type="hidden" id="TableName" value="@(ViewBag.Table)">
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Commit</button>
                         <a class="btn btn-default" onclick='$("#addLine").modal("toggle");'>Close</a>
@@ -86,14 +91,14 @@
 </div>
 
 <!-- Edit line modal -->
-<div class="modal fade" id="editLine" role="dialog">
+<div class="modal fade" id="editLine" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Edit Data</h3>
+                <h3 class="modal-title">Edit Line Data</h3>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" autocomplete="off">
+                <form class="form-horizontal" autocomplete="off" id="editLineForm" onsubmit="return Line(Edit)">
                     @foreach (DataColumn _column in Model.Columns)
                     {
                         if (@ViewBag.AutoInc != _column.ColumnName)
@@ -101,18 +106,24 @@
                             <div class="form-group">
                                 <label class="col-xs-3 control-label">@(_column.ColumnName)</label>
                                 <div class="col-xs-9">
-                                    <input class="form-control">
+                                    <input class="form-control" id="@(_column.ColumnName)">
                                 </div>
                             </div>
                         }
                     }
 
-                    <input type="hidden" id="TableName" value="@(ViewBag.Table)">
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Commit</button>
-                        <a class="btn btn-default" onclick='$("#addLine").modal("toggle");'>Close</a>
+                        <a class="btn btn-default" onclick='$("#editLine").modal("toggle");'>Close</a>
                     </div>
                 </form>
+
+                <div class="hidden" id="editLineWork">
+                    Working On It...
+                    <div class="fa-3x text-center">
+                        <i class="fas fa-cog fa-spin"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

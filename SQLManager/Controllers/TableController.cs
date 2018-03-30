@@ -22,7 +22,6 @@ namespace SQLManager.Controllers
                 using (var _conn = new SqliteConnection(Extensions.Connection[1]))
                 {
                     await _conn.OpenAsync();
-
                     using (var _transaction = _conn.BeginTransaction())
                     {
                         var _Command = _conn.CreateCommand();
@@ -89,7 +88,7 @@ namespace SQLManager.Controllers
         }
 
         [HttpPost]
-        public async void Add(string InsertData, string FieldNames, string TableName)
+        public async Task<int> Add(string[] InsertData, string FieldNames, string TableName)
         {
             if (Extensions.Connection[0].Equals("SQLite"))
             {
@@ -101,7 +100,18 @@ namespace SQLManager.Controllers
                     {
                         var _Command = _conn.CreateCommand();
                         _Command.Transaction = _transaction;
-                        _Command.CommandText = @"INSERT INTO " + TableName + "(" + FieldNames + ") VALUES (" + InsertData + ")";
+
+                        var _parameters = "";
+
+                        for (int i = 0; i < InsertData.Length; i++)
+                        {
+                            _parameters += @"$param" + i.ToString() + ", ";
+                            _Command.Parameters.AddWithValue("$param" + i.ToString(), InsertData[i]);
+                        }
+
+                        _Command.CommandText = @"INSERT INTO " + TableName + "(" +
+                            FieldNames.Remove(FieldNames.Length - 2) + ") VALUES (" +
+                            _parameters.Remove(_parameters.Length - 2) + ")";
 
                         await _Command.ExecuteNonQueryAsync();
 
@@ -109,6 +119,43 @@ namespace SQLManager.Controllers
                     }
                 }
             }
+
+            return 0;
+        }
+
+        public async Task<int> Edit(string[] InsertData, string FieldNames, string TableName)
+        {
+            if (Extensions.Connection[0].Equals("SQLite"))
+            {
+                using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                {
+                    await _conn.OpenAsync();
+
+                    using (var _transaction = _conn.BeginTransaction())
+                    {
+                        var _Command = _conn.CreateCommand();
+                        _Command.Transaction = _transaction;
+
+                        var _fields = FieldNames.Remove(FieldNames.Length - 2).Split(" ,");
+
+                        for (int i = 0; i < InsertData.Length; i++)
+                        {
+                            _Command.Parameters.AddWithValue("$param" + i.ToString(), InsertData[i]);
+                        }
+                        // TODO construct update command
+
+                        // _Command.CommandText = @"UPDATE " + TableName + "(" +
+                        //     FieldNames.Remove(FieldNames.Length - 2) + ") VALUES (" +
+                        //     _parameters.Remove(_parameters.Length - 2) + ")";
+
+                        await _Command.ExecuteNonQueryAsync();
+
+                        _transaction.Commit();
+                    }
+                }
+            }
+
+            return 0;
         }
     }
 }

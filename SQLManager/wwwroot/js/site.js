@@ -11,12 +11,10 @@ function SelectSQL() {
     if (_Selection == "SQLServer") {
         $("#SQLServer").removeClass("hidden");
         $("#SQLServer").show();
-    }
-    else if (_Selection == "MySQL") {
+    } else if (_Selection == "MySQL") {
         $("#MySQL").removeClass("hidden");
         $("#MySQL").show();
-    }
-    else {
+    } else {
         $("#SQLite").removeClass("hidden");
         $("#SQLite").show();
     }
@@ -33,79 +31,91 @@ function BackToServerTypes() {
 //
 // Add data to table
 //
-function ResetAddLine() {
-    document.getElementById("addLineForm").reset();
-    $("#addLineForm").show();
-    $("#addLineWork").addClass("hidden");
+function ResetLine(type) {
+    if (type == Add) {
+        document.getElementById("addLineForm").reset();
+        $("#addLineForm").show();
+        $("#addLineWork").addClass("hidden");
+    } else {
+        document.getElementById("editLineForm").reset();
+        $("#editLineForm").show();
+        $("#editLineWork").addClass("hidden");
+    }
 }
-
-function AddLine() {
-    var _form = document.getElementById("addLineForm");
-    var _insert = "";
+//
+// Modal data to method
+//
+function Line(type) {
+    var _insert = new Array();
     var _id = "";
-    var counter = 0;
-    //
-    // Get first element with value
-    //
-    for(i = 0; i < _form.elements.length - 1; i++)
-    {
-        if (_form.elements[i].value.length > 0) {
-            if (isNaN(parseFloat(_form.elements[i].value))) {
-                _insert = "'" + _form.elements[i].value + "'";
-            }
-            else
-            {
-                _insert = _form.elements[i].value;
-            }
-            _id = _form.elements[i].id;
-            counter = i + 1;
-            break;
-        }
+
+    alert(type);
+
+    if (type == "Add") {
+        var _form = document.getElementById("addLineForm");
+        var _url = "/Table/Add";
+
+        $("#addLineForm").hide();
+        $("#addLineWork").removeClass("hidden");
+        $("#addLineWork").show();
+    } else {
+        var _form = document.getElementById("editLineForm");
+        var _url = "/Table/Edit";
+
+        $("#editLineForm").hide();
+        $("#editLineWork").removeClass("hidden");
+        $("#editLineWork").show();
     }
     //
-    // Get rest elements with values
+    // Get elements with values
     //
-    for(i = counter; i < _form.elements.length - 2; i++)
-    {
+    for (i = 0; i < _form.elements.length - 1; i++) {
         if (_form.elements[i].value.length > 0) {
-            if (isNaN(parseFloat(_form.elements[i].value))) {
-                _insert += ", '" + _form.elements[i].value + "'";
-            }
-            else
-            {
-                _insert += ", " + _form.elements[i].value;
-            }
-            _id += ", " + _form.elements[i].id;
+            _insert.push(_form.elements[i].value);
+            _id += _form.elements[i].id + ", ";
         }
     }
 
-    $("#addLineForm").hide();
-    $("#addLineWork").removeClass("hidden");
-    $("#addLineWork").show();
-
-    var ToSend = 
-    {
+    var ToSend = {
         InsertData: _insert,
         FieldNames: _id,
         TableName: document.getElementById("TableName").value
     };
 
     $.ajax({
-        url: "/Table/Add",
-        type: "POST",
-        data: ToSend,
-        // contentType: "application/json; charset=utf-8",
-        // dataType: "json",
-        success: function(data) {
-            //alert("Komple");
-            location.reload();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown){
-        alert(errorThrown);
-        $("#addLineForm").show();
-        $("#addLineWork").addClass("hidden");
-    });
+            url: _url,
+            type: "POST",
+            data: ToSend,
+            success: function (data) {
+                location.reload();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            alert(errorThrown);
+            if (type == "Add") {
+                $("#addLineForm").show();
+                $("#addLineWork").addClass("hidden");
+            } else {
+                $("#editLineForm").show();
+                $("#editLineWork").addClass("hidden");
+            }
+        });
 
     return false;
+}
+
+function EditLineData(line) {
+    var _table = document.getElementById("LinesTable").rows[line];
+
+    var _tableArray = [];
+
+    for (i = 1; i < _table.cells.length; i++) {
+        _tableArray[$("#LinesTable th").eq(i).text()] = _table.cells[i].innerHTML;
+    }
+
+    var _form = document.getElementById("editLineForm");
+
+    for (i = 0; i < _form.elements.length - 1; i++) {
+        _form.elements[i].value = _tableArray[_form.elements[i].id];
+    }
 }
