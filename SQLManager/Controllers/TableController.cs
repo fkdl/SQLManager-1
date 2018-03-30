@@ -83,12 +83,13 @@ namespace SQLManager.Controllers
             }
 
             ViewBag.Title = "View " + Name + " data";
+            ViewBag.Table = Name;
 
             return View(_Data);
         }
 
         [HttpPost]
-        public async void Add(string InsertData, string FieldNames)
+        public async void Add(string InsertData, string FieldNames, string TableName)
         {
             if (Extensions.Connection[0].Equals("SQLite"))
             {
@@ -100,9 +101,11 @@ namespace SQLManager.Controllers
                     {
                         var _Command = _conn.CreateCommand();
                         _Command.Transaction = _transaction;
-                        _Command.CommandText = @"INSERT INTO ";
+                        _Command.CommandText = @"INSERT INTO " + TableName + "(" + FieldNames + ") VALUES (" + InsertData + ")";
 
-                        //await _Command.ExecuteNonQueryAsync();
+                        await _Command.ExecuteNonQueryAsync();
+
+                        _transaction.Commit();
                     }
                 }
             }

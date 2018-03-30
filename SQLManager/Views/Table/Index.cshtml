@@ -54,27 +54,25 @@
                 <h3 class="modal-title">Add new Data</h3>
             </div>
             <div class="modal-body" id="addModalBody">
-                <!-- <div id="addForm"> -->
-                    <form class="form-horizontal" onsubmit="return AddLine()" id="addLineForm">
-                        @foreach (DataColumn _column in Model.Columns)
+                <form class="form-horizontal" onsubmit="return AddLine()" id="addLineForm" autocomplete="off">
+                    @foreach (DataColumn _column in Model.Columns)
+                    {
+                        @if (ViewBag.AutoInc != _column.ColumnName)
                         {
-                            @if (ViewBag.AutoInc != _column.ColumnName)
-                            {
-                                <div class="form-group">
-                                    <label class="col-xs-3 control-label">@(_column.ColumnName)</label>
-                                    <div class="col-xs-9">
-                                        <input class="form-control" id="@(_column.ColumnName)">
-                                    </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 control-label">@(_column.ColumnName)</label>
+                                <div class="col-xs-9">
+                                    <input class="form-control" id="@(_column.ColumnName)">
                                 </div>
-                            }
+                            </div>
                         }
-
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Commit</button>
-                            <a class="btn btn-default" onclick='$("#addLine").modal("toggle");'>Close</a>
-                        </div>
-                    </form>
-                <!-- </div> -->
+                    }
+                    <input type="hidden" id="TableName" value="@(ViewBag.Table)">
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Commit</button>
+                        <a class="btn btn-default" onclick='$("#addLine").modal("toggle");'>Close</a>
+                    </div>
+                </form>
                 
                 <div class="hidden" id="addLineWork">
                     Working On It...
@@ -95,7 +93,7 @@
                 <h3 class="modal-title">Edit Data</h3>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal">
+                <form class="form-horizontal" autocomplete="off">
                     @foreach (DataColumn _column in Model.Columns)
                     {
                         if (@ViewBag.AutoInc != _column.ColumnName)
@@ -108,10 +106,13 @@
                             </div>
                         }
                     }
+
+                    <input type="hidden" id="TableName" value="@(ViewBag.Table)">
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Commit</button>
+                        <a class="btn btn-default" onclick='$("#addLine").modal("toggle");'>Close</a>
+                    </div>
                 </form>
-                <div class="modal-footer">
-                    <a class="btn btn-default">Commit</a>
-                </div>
             </div>
         </div>
     </div>

@@ -50,7 +50,13 @@ function AddLine() {
     for(i = 0; i < _form.elements.length - 1; i++)
     {
         if (_form.elements[i].value.length > 0) {
-            _insert = _form.elements[i].value;
+            if (isNaN(parseFloat(_form.elements[i].value))) {
+                _insert = "'" + _form.elements[i].value + "'";
+            }
+            else
+            {
+                _insert = _form.elements[i].value;
+            }
             _id = _form.elements[i].id;
             counter = i + 1;
             break;
@@ -59,10 +65,16 @@ function AddLine() {
     //
     // Get rest elements with values
     //
-    for(i = counter; i < _form.elements.length - 1; i++)
+    for(i = counter; i < _form.elements.length - 2; i++)
     {
         if (_form.elements[i].value.length > 0) {
-            _insert += ", " + _form.elements[i].value;
+            if (isNaN(parseFloat(_form.elements[i].value))) {
+                _insert += ", '" + _form.elements[i].value + "'";
+            }
+            else
+            {
+                _insert += ", " + _form.elements[i].value;
+            }
             _id += ", " + _form.elements[i].id;
         }
     }
@@ -74,15 +86,16 @@ function AddLine() {
     var ToSend = 
     {
         InsertData: _insert,
-        FieldNames: _id
+        FieldNames: _id,
+        TableName: document.getElementById("TableName").value
     };
 
     $.ajax({
         url: "/Table/Add",
         type: "POST",
         data: ToSend,
-        //contentType: "application/json; charset=utf-8",
-        //dataType: "json",
+        // contentType: "application/json; charset=utf-8",
+        // dataType: "json",
         success: function(data) {
             //alert("Komple");
             location.reload();
