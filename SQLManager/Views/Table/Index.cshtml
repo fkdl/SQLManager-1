@@ -24,12 +24,21 @@
                                     <a data-toggle="modal" data-target="#editLine" onclick="EditLineData(@(line))">
                                         <i class="far fa-edit" style="font-size: 115%;"></i>
                                     </a>
-                                    <i class="far fa-trash-alt" style="font-size: 115%;"></i>
+                                    <a data-toggle="modal" data-target="#removeLine" onclick="RemoveLineData(@(line))">
+                                        <i class="far fa-trash-alt" style="font-size: 115%;"></i>
+                                    </a>
                                 </td>
 
                                 @foreach (DataColumn _col in Model.Columns)
                                 {
-                                    <td style="white-space: nowrap; width: 1%;">@(_row[_col.ColumnName])</td>
+                                    if (@ViewBag.PrimaryKey.Contains(_col.ColumnName))
+                                    {
+                                        <td id="PrimaryKey" style="white-space: nowrap; width: 1%;">@(_row[_col.ColumnName])</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="white-space: nowrap; width: 1%;">@(_row[_col.ColumnName])</td>
+                                    }
                                 }
                             </tr>
 
@@ -41,7 +50,7 @@
     </div>
     <hr />
     <div class="row">
-        <a class="btn btn-primary col-xs-1" role="button" data-toggle="modal" data-target="#addLine" onclick="ResetLine('Add')">
+        <a class="btn btn-primary col-xs-1" role="button" data-toggle="modal" data-target="#addLine" onclick="ResetLine()">
             Add line
         </a>
         <a class="btn btn-primary col-xs-1" role="button" asp-action="Index" asp-controller="Schema" style="margin-left: 1vw;">
@@ -98,7 +107,7 @@
                 <h3 class="modal-title">Edit Line Data</h3>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" autocomplete="off" id="editLineForm" onsubmit="return Line(Edit)">
+                <form class="form-horizontal" autocomplete="off" id="editLineForm" onsubmit="return Line('Edit')">
                     @foreach (DataColumn _column in Model.Columns)
                     {
                         if (@ViewBag.AutoInc != _column.ColumnName)
@@ -111,6 +120,21 @@
                             </div>
                         }
                     }
+                    
+                    <h3>Update Key</h3>
+                    <hr />
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Column Name</label>
+                        <div class="col-xs-9">
+                            <input class="form-control" id="ElementName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Column Value</label>
+                        <div class="col-xs-9">
+                            <input class="form-control" id="ElementKey">
+                        </div>
+                    </div>
 
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Commit</button>
@@ -119,6 +143,47 @@
                 </form>
 
                 <div class="hidden" id="editLineWork">
+                    Working On It...
+                    <div class="fa-3x text-center">
+                        <i class="fas fa-cog fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Remove line modal -->
+<div class="modal fade" id="removeLine" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Remove Line Data</h3>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" autocomplete="off" id="removeLineForm" onsubmit="return RemoveLine()">
+                    <h3>Please confirm line data deletion</h3>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Column Name</label>
+                        <div class="col-xs-9">
+                            <input class="form-control" name="RemoveName">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Column Value</label>
+                        <div class="col-xs-9">
+                            <input class="form-control" name="RemoveValue">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Commit</button>
+                        <a class="btn btn-default" onclick='$("#removeLine").modal("toggle");'>Close</a>
+                    </div>
+                </form>
+
+                <div class="hidden" id="removeLineWork">
                     Working On It...
                     <div class="fa-3x text-center">
                         <i class="fas fa-cog fa-spin"></i>
