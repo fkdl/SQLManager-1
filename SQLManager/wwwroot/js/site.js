@@ -184,8 +184,12 @@ function ResetTable() {
     _form.reset();
 }
 
-function AddField(field) {
+function AddField() {
     var _builder = [];
+
+    var _lInput = document.getElementById('createTableFields').getElementsByTagName('input')[document.getElementById('createTableFields').getElementsByTagName.length - 1].id;
+
+    var 
 
     _builder.push('<div class="form-group">');
     _builder.push('<div class="form-check col-xs-3">');
@@ -201,4 +205,8 @@ function AddField(field) {
     var _htmlToAdd = _builder.join('');
 
     alert(_htmlToAdd);
+
+    field++;
+
+    return field;
 }

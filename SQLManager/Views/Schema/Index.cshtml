@@ -1,5 +1,4 @@
 @model Dictionary<string, List<Tuple<string, string, string>>>
-@{int field = 1;}
 
 @{ ViewData["Title"] = "Database Schema"; }
 
@@ -89,8 +88,7 @@
                     </div>
 
                     <div>
-                        <a onclick="AddField(@(field))">Add Field</a>
-                        @{ field++; }
+                        <a onclick="AddField()">Add Field</a>
                     </div>
 
                     <div class="modal-footer">
