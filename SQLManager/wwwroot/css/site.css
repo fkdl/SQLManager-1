@@ -12,6 +12,10 @@
     box-shadow: 0px 10px 15px 5px rgb(61, 65, 65);
 }
 
+#createTableLink:hover {
+    color: #27aae1;
+}
+
 footer {
     position: absolute;
     bottom: 0;
@@ -22,6 +26,7 @@ footer {
 }
 
 /* Hide/rearrange for smaller screens */
+
 @media screen and (max-width: 767px) {
     /* Hide captions */
     .carousel-caption {

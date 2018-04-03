@@ -175,3 +175,30 @@ function RemoveLine() {
 
     return false;
 }
+//
+// Create Table
+//
+function ResetTable() {
+    var _form = document.getElementById("createTableForm");
+
+    _form.reset();
+}
+
+function AddField(field) {
+    var _builder = [];
+
+    _builder.push('<div class="form-group">');
+    _builder.push('<div class="form-check col-xs-3">');
+    _builder.push('<input type="checkbox" class="form-check-input" id="PK' + field.toString() + '">');
+    _builder.push('<label class="form-check-label" for="PK' + field.toString() + '">Primary Key</label>');
+    _builder.push('</div><div class="col-xs-3">');
+    _builder.push('<input class="form-control" id="Name' + field.toString() + '" placeholder="Name"></div>');
+    _builder.push('<div class="col-xs-3"><input class="form-control" id="Type' + field.toString() + '" placeholder="Type">');
+    _builder.push('</div><div class="col-xs-3">');
+    _builder.push('<input class="form-control" id="Length' + field.toString() + '" placeholder="Lentgh"></div></div>');
+
+    
+    var _htmlToAdd = _builder.join('');
+
+    alert(_htmlToAdd);
+}

@@ -1,35 +1,111 @@
 @model Dictionary<string, List<Tuple<string, string, string>>>
+@{int field = 1;}
 
 @{ ViewData["Title"] = "Database Schema"; }
 
 <div class="container-fluid" style="padding-top: 5vh;
         border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
-    @foreach (var _table in Model)
-    {
+    <div class="row">
+        @foreach (var _table in Model)
+        {
+            <div class="col-xs-3">
+                <div class="panel panel-info" style="border-radius: 0;">
+                    <div class="panel-heading" style="border-radius: 0;">
+                        @_table.Key
+                        <a asp-action="Index" asp-controller="Table" asp-route-Name="@_table.Key" class="pull-right">
+                            <i class="fas fa-angle-double-right" style="font-size: 120%"></i>
+                        </a>
+                    </div>
+                    <div class="panel-body" style="border-radius: 0;">
+                        @foreach (var _column in _table.Value)
+                        {
+                            @if (_column.Item3 == "1")
+                            {
+                                <p><i class="fa fa-key"></i> @_column.Item1, @_column.Item2.ToLower()</p>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <hr />
+
+    <div class="row">
         <div class="col-xs-3">
             <div class="panel panel-info" style="border-radius: 0;">
                 <div class="panel-heading" style="border-radius: 0;">
-                    @_table.Key
-                    <a asp-action="Index" asp-controller="Table" asp-route-Name="@_table.Key" class="pull-right">
-                        <i class="fas fa-angle-double-right" style="font-size: 120%"></i>
-                    </a>
+                    Add Table
                 </div>
-                <div class="panel-body" style="border-radius: 0;">
-                    @foreach (var _column in _table.Value)
-                    {
-                        @if (_column.Item3 == "1")
-                        {
-                            <p><i class="fa fa-key"></i> @_column.Item1, @_column.Item2.ToLower()</p>
-                        }
-                    }
+                <div class="panel-body text-center" style="border-radius: 0;">
+                    <a data-toggle="modal" data-target="#createTable" id="createTableLink" onclick="ResetTable()"
+                        <i class="fa fa-plus-circle" style="font-size: 300%;"></i>
+                    </a>
                 </div>
             </div>
         </div>
-    }
+    </div>
 
     <hr />
 
     <a class="btn btn-primary col-xs-1" role="button" asp-action="Index" asp-controller="Home">
         Back
     </a>
+</div>
+
+<!-- New table modal -->
+<div class="modal fade" id="createTable" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Table</h3>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" onsubmit="return false" id="createTableForm" autocomplete="off">
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Table Name</label>
+                        <div class="col-xs-9">
+                            <input class="form-control" id="TableName">
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="createTableFields">
+                        <div class="form-group">
+                            <div class="form-check col-xs-3">
+                                <input type="checkbox" class="form-check-input" id="PK0">
+                                <label class="form-check-label" for="PK0">Primary Key</label>
+                            </div>
+                            <div class="col-xs-3">
+                                <input class="form-control" id="Name0" placeholder="Name">
+                            </div>
+                            <div class="col-xs-3">
+                                <input class="form-control" id="Type0" placeholder="Type">
+                            </div>
+                            <div class="col-xs-3">
+                                <input class="form-control" id="Length0" placeholder="Lentgh">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a onclick="AddField(@(field))">Add Field</a>
+                        @{ field++; }
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Commit</button>
+                        <a class="btn btn-default" onclick='$("#createTable").modal("toggle");'>Close</a>
+                    </div>
+                </form>
+                
+                <div class="hidden" id="createTableWork">
+                    Working On It...
+                    <div class="fa-3x text-center">
+                        <i class="fas fa-cog fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
