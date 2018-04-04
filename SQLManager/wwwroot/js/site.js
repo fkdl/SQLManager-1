@@ -179,34 +179,43 @@ function RemoveLine() {
 // Create Table
 //
 function ResetTable() {
+    var _builder = [];
     var _form = document.getElementById("createTableForm");
 
     _form.reset();
+
+    _builder.push('<div class="form-group" id="group0">');
+    _builder.push('<div class="form-check col-xs-3">');
+    _builder.push('<input type="checkbox" class="form-check-input" id="PK0">');
+    _builder.push('<label class="form-check-label" for="PK0">Primary Key</label>');
+    _builder.push('</div><div class="col-xs-3">');
+    _builder.push('<input class="form-control" id="Name0" placeholder="Name"></div>');
+    _builder.push('<div class="col-xs-3"><input class="form-control" id="Type0" placeholder="Type">');
+    _builder.push('</div><div class="col-xs-3">');
+    _builder.push('<input class="form-control" id="Length0" placeholder="Lentgh"></div></div>');
+
+    document.getElementById("createTableFields").innerHTML = _builder.join('');
 }
 
 function AddField() {
     var _builder = [];
 
-    var _lInput = document.getElementById('createTableFields').getElementsByTagName('input')[document.getElementById('createTableFields').getElementsByTagName.length - 1].id;
+    var field = $('[id^=group').last().attr('id').slice(-1);
 
-    var 
+    field++;
 
-    _builder.push('<div class="form-group">');
+    _builder.push('<div class="form-group" id="group' + field + '">');
     _builder.push('<div class="form-check col-xs-3">');
-    _builder.push('<input type="checkbox" class="form-check-input" id="PK' + field.toString() + '">');
-    _builder.push('<label class="form-check-label" for="PK' + field.toString() + '">Primary Key</label>');
+    _builder.push('<input type="checkbox" class="form-check-input" id="PK' + field + '">');
+    _builder.push('<label class="form-check-label" for="PK' + field + '">Primary Key</label>');
     _builder.push('</div><div class="col-xs-3">');
-    _builder.push('<input class="form-control" id="Name' + field.toString() + '" placeholder="Name"></div>');
-    _builder.push('<div class="col-xs-3"><input class="form-control" id="Type' + field.toString() + '" placeholder="Type">');
+    _builder.push('<input class="form-control" id="Name' + field + '" placeholder="Name"></div>');
+    _builder.push('<div class="col-xs-3"><input class="form-control" id="Type' + field + '" placeholder="Type">');
     _builder.push('</div><div class="col-xs-3">');
-    _builder.push('<input class="form-control" id="Length' + field.toString() + '" placeholder="Lentgh"></div></div>');
+    _builder.push('<input class="form-control" id="Length' + field + '" placeholder="Lentgh"></div></div>');
 
     
     var _htmlToAdd = _builder.join('');
 
-    alert(_htmlToAdd);
-
-    field++;
-
-    return field;
+    document.getElementById("createTableFields").innerHTML += _htmlToAdd;
 }
