@@ -36,6 +36,33 @@ namespace SQLManager.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SQLServerContext(string _server, string _db, string _user, string _pass)
+        {
+            try
+            {
+                var _connection = "Data Source=" + _server + "Initial Catalog=" + _db +
+                    ";User id=" + _user + ";Password=" + _pass + ";";
+
+                using (SqlConnection _conn = new SqlConnection(_connection))
+                {
+                    await _conn.OpenAsync();
+                }
+
+                Extensions.Connection[0] = "SQLServer";
+                Extensions.Connection[1] = _connection;
+                return RedirectToAction("Index", "Schema");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+
+
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

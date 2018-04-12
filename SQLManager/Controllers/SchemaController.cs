@@ -15,7 +15,41 @@ namespace SQLManager.Controllers
             var _Tables = new List<string>();
             var _Columns = new Dictionary<string, List<Tuple<string, string, string>>>();
 
-            if (Extensions.Connection[0].Equals("SQLite"))
+            if (Extensions.Connection[0].Equals("SQLServer"))
+            {
+                using (var _conn = new SqlConnection(Extensions.Connection[1]))
+                {
+                    await _conn.OpenAsync();
+                    using (var _transaction = _conn.BeginTransaction())
+                    {
+                        var _Command = _conn.CreateCommand();
+                        _Command.Transaction = _transaction;
+                        _Command.CommandText = @"SELECT DISTINCT t.TABLE_NAME As 'Table Name',
+                                                    ISNULL(Keys.COLUMN_NAME, '0') AS 'Primary Key',
+                                                    ISNULL(Cols.DATA_TYPE, '0') AS 'Data Type'
+                                                FROM INFORMATION_SCHEMA.TABLES t 
+                                                left outer join INFORMATION_SCHEMA.TABLE_CONSTRAINTS Constraints
+                                                        on  t.TABLE_NAME = Constraints.Table_name 
+                                                        and t.Table_Schema = Constraints.Table_Schema  
+                                                        and Constraints.CONSTRAINT_TYPE = 'PRIMARY KEY'       
+                                                left outer join INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS Keys 
+                                                        ON  Constraints.TABLE_NAME = Keys.TABLE_NAME 
+                                                        and Constraints.CONSTRAINT_NAME = Keys.CONSTRAINT_NAME
+                                                left outer join INFORMATION_SCHEMA.COLUMNS AS Cols
+                                                        ON Keys.TABLE_NAME = Cols.TABLE_NAME
+                                                        and Keys.COLUMN_NAME = Cols.COLUMN_NAME";
+
+                        using (var _reader = await _Command.ExecuteReaderAsync())
+                        {
+                            while (await _reader.ReadAsync())
+                            {
+                                //TODO
+                            }
+                        }
+                    }
+                }
+            }
+            else if (Extensions.Connection[0].Equals("SQLite"))
             {
                 using (var _conn = new SqliteConnection(Extensions.Connection[1]))
                 {
@@ -61,7 +95,7 @@ namespace SQLManager.Controllers
                     }
                 }
             }
-            
+
             return View(_Columns);
         }
 
@@ -82,7 +116,7 @@ namespace SQLManager.Controllers
                         foreach (var _element in FieldData)
                         {
                             var _line = _element.Split("; ");
-                            
+
                             if (_line[0] == "true")
                             {
                                 _Command.CommandText += _line[1] + " " + _line[2] + " PRIMARY KEY, ";
@@ -101,7 +135,7 @@ namespace SQLManager.Controllers
                     }
                 }
             }
-            
+
             return 0;
         }
     }
