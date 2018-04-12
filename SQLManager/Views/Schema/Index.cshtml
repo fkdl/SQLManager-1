@@ -2,7 +2,7 @@
 
 @{ ViewData["Title"] = "Database Schema"; }
 
-<div class="container-fluid" style="padding-top: 5vh;
+<div style="padding-top: 5vh; padding-bottom: 10vh;
         border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
     <div class="row">
         @foreach (var _table in Model)
@@ -38,7 +38,7 @@
                     Add Table
                 </div>
                 <div class="panel-body text-center" style="border-radius: 0;">
-                    <a data-toggle="modal" data-target="#createTable" id="createTableLink" onclick="ResetTable()"
+                    <a data-toggle="modal" data-target="#createTable" id="createTableLink" onclick="ResetTable()">
                         <i class="fa fa-plus-circle" style="font-size: 300%;"></i>
                     </a>
                 </div>
@@ -61,7 +61,7 @@
                 <h3 class="modal-title">Create New Table</h3>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" onsubmit="return false" id="createTableForm" autocomplete="off">
+                <form class="form-horizontal" onsubmit="return CreateTable()" id="createTableForm" autocomplete="off">
                     <div class="form-group">
                         <label class="col-xs-3 control-label">Table Name</label>
                         <div class="col-xs-9">
@@ -70,25 +70,11 @@
                     </div>
                     <hr />
                     <div id="createTableFields">
-                        <div class="form-group" id="group0">
-                            <div class="form-check col-xs-3">
-                                <input type="checkbox" class="form-check-input" id="PK0">
-                                <label class="form-check-label" for="PK0">Primary Key</label>
-                            </div>
-                            <div class="col-xs-3">
-                                <input class="form-control" id="Name0" placeholder="Name">
-                            </div>
-                            <div class="col-xs-3">
-                                <input class="form-control" id="Type0" placeholder="Type">
-                            </div>
-                            <div class="col-xs-3">
-                                <input class="form-control" id="Length0" placeholder="Lentgh">
-                            </div>
-                        </div>
+                        <!-- JS generated field lines -->
                     </div>
 
                     <div>
-                        <a onclick="AddField()">Add Field</a>
+                        <a href="" onclick="return AddField()">Add Field</a>
                     </div>
 
                     <div class="modal-footer">

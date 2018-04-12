@@ -64,5 +64,45 @@ namespace SQLManager.Controllers
             
             return View(_Columns);
         }
+
+        [HttpPost]
+        public async Task<int> Create(string TableName, string[] FieldData)
+        {
+            if (Extensions.Connection[0].Equals("SQLite"))
+            {
+                using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                {
+                    await _conn.OpenAsync();
+                    using (var _transaction = _conn.BeginTransaction())
+                    {
+                        var _Command = _conn.CreateCommand();
+                        _Command.Transaction = _transaction;
+                        _Command.CommandText = "CREATE TABLE " + TableName + " (";
+
+                        foreach (var _element in FieldData)
+                        {
+                            var _line = _element.Split("; ");
+                            
+                            if (_line[0] == "true")
+                            {
+                                _Command.CommandText += _line[1] + " " + _line[2] + " PRIMARY KEY, ";
+                            }
+                            else
+                            {
+                                _Command.CommandText += _line[1] + " " + _line[2] + ", ";
+                            }
+                        }
+
+                        _Command.CommandText = _Command.CommandText.Remove(_Command.CommandText.Length - 2) + ")";
+
+                        await _Command.ExecuteNonQueryAsync();
+
+                        _transaction.Commit();
+                    }
+                }
+            }
+            
+            return 0;
+        }
     }
 }
