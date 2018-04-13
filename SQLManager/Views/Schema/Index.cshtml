@@ -1,4 +1,4 @@
-@model Dictionary<string, List<Tuple<string, string, string>>>
+@model Dictionary<string, List<Tuple<string, string>>>
 
 @{ ViewData["Title"] = "Database Schema"; }
 
@@ -18,10 +18,7 @@
                     <div class="panel-body" style="border-radius: 0;">
                         @foreach (var _column in _table.Value)
                         {
-                            @if (_column.Item3 == "1")
-                            {
-                                <p><i class="fa fa-key"></i> @_column.Item1, @_column.Item2.ToLower()</p>
-                            }
+                            <p><i class="fa fa-key"></i> @_column.Item1, @_column.Item2.ToLower()</p>
                         }
                     </div>
                 </div>

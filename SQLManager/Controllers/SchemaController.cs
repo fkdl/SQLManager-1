@@ -12,8 +12,7 @@ namespace SQLManager.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            var _Tables = new List<string>();
-            var _Columns = new Dictionary<string, List<Tuple<string, string, string>>>();
+            var _Columns = new Dictionary<string, List<Tuple<string, string>>>();
 
             if (Extensions.Connection[0].Equals("SQLServer"))
             {
@@ -41,9 +40,30 @@ namespace SQLManager.Controllers
 
                         using (var _reader = await _Command.ExecuteReaderAsync())
                         {
+                            var _TmpList = new List<Tuple<string, string>>();
+
                             while (await _reader.ReadAsync())
                             {
-                                //TODO
+                                if (_reader.GetString(1) != "0")
+                                {
+
+                                    if (!_Columns.TryAdd(_reader.GetString(0),
+                                            new List<Tuple<string, string>>{
+                                                Tuple.Create(_reader.GetString(1),
+                                                _reader.GetString(2))
+                                            })
+                                        )
+                                    {
+                                        _Columns[_reader.GetString(0)].Add(new Tuple<string, string>(
+                                            _reader.GetString(1),
+                                            _reader.GetString(2)
+                                        ));
+                                    }
+                                }
+                                else
+                                {
+                                    _Columns.Add(_reader.GetString(0), new List<Tuple<string, string>>());
+                                }
                             }
                         }
                     }
@@ -53,6 +73,7 @@ namespace SQLManager.Controllers
             {
                 using (var _conn = new SqliteConnection(Extensions.Connection[1]))
                 {
+                    var _Tables = new List<string>();
                     await _conn.OpenAsync();
                     using (var _transaction = _conn.BeginTransaction())
                     {
@@ -72,7 +93,7 @@ namespace SQLManager.Controllers
 
                         foreach (var _element in _Tables)
                         {
-                            var _TmpList = new List<Tuple<string, string, string>>();
+                            var _TmpList = new List<Tuple<string, string>>();
 
                             var _ColumnsCommand = _conn.CreateCommand();
                             _ColumnsCommand.Transaction = _transaction;
@@ -82,11 +103,13 @@ namespace SQLManager.Controllers
                             {
                                 while (await _reader.ReadAsync())
                                 {
-                                    _TmpList.Add(new Tuple<string, string, string>(
-                                        _reader.GetString(1),
-                                        _reader.GetString(2),
-                                        _reader.GetString(5)
-                                    ));
+                                    if (_reader.GetInt32(5) == 1)
+                                    {
+                                        _TmpList.Add(new Tuple<string, string>(
+                                            _reader.GetString(1),
+                                            _reader.GetString(2)
+                                        ));
+                                    }
                                 }
 
                                 _Columns.Add(_element, _TmpList);
