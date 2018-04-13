@@ -1,4 +1,5 @@
 @model Dictionary<string, List<Tuple<string, string>>>
+@{ int _cnt = 1; }
 
 @{ ViewData["Title"] = "Database Schema"; }
 
@@ -23,6 +24,12 @@
                     </div>
                 </div>
             </div>
+            if (_cnt % 4 == 0)
+            {
+                <div class="clearfix"></div>
+            }
+
+            _cnt++;
         }
     </div>
 

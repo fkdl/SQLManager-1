@@ -42,7 +42,7 @@ namespace SQLManager.Controllers
         {
             try
             {
-                var _connection = "Data Source=" + _server + "Initial Catalog=" + _db +
+                var _connection = "Data Source=" + _server + ";Initial Catalog=" + _db +
                     ";User id=" + _user + ";Password=" + _pass + ";";
 
                 using (SqlConnection _conn = new SqlConnection(_connection))
