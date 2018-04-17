@@ -184,15 +184,26 @@ function ResetTable() {
 
     _form.reset();
 
-    _builder.push('<div class="form-group">');
-    _builder.push('<div class="form-check col-xs-3">');
-    _builder.push('<input type="checkbox" class="form-check-input" name="PK">');
-    _builder.push('<label class="form-check-label">PK</label>');
-    _builder.push('</div><div class="col-xs-3">');
-    _builder.push('<input class="form-control" name="Name" placeholder="Name"></div>');
-    _builder.push('<div class="col-xs-3"><input class="form-control" name="Type" placeholder="Type">');
-    _builder.push('</div><div class="col-xs-3">');
-    _builder.push('<input class="form-control" name="Length" placeholder="Lentgh"></div></div>');
+    _builder.push(' <div class="form-group">' +
+                        '<div class="form-check col-xs-2">' +
+                            '<input type="checkbox" class="form-check-input" name="PK">' +
+                            '<label class="form-check-label">PK</label>' +
+                        '</div>' +
+                        '<div class="form-check col-xs-2">' +
+                            '<input type="checkbox" class="form-check-input" name="AI">' +
+                            '<label class="form-check-label">AI</label>' +
+                        '</div>' +
+                        '<div class="col-xs-3">' +
+                            '<input class="form-control" name="Name" placeholder="Name">' +
+                        '</div>' +
+                        '<div class="col-xs-3">' +
+                            '<input class="form-control" name="Type" placeholder="Type">' +
+                        '</div>' +
+                        '<div class="col-xs-2">' +
+                            '<input class="form-control" name="Length" placeholder="Lentgh">' +
+                        '</div>' +
+                    '</div>'
+                 );
 
     document.getElementById("createTableFields").innerHTML = _builder.join('');
 }
@@ -200,29 +211,26 @@ function ResetTable() {
 function AddField() {
     var _builder = [];
 
-    // var field = $('[id^=group').last().attr('id').slice(-1);
-
-    // field++;
-
-    // _builder.push('<div class="form-group" id="group' + field + '">');
-    // _builder.push('<div class="form-check col-xs-3">');
-    // _builder.push('<input type="checkbox" class="form-check-input" id="PK' + field + '">');
-    // _builder.push('<label class="form-check-label" for="PK' + field + '">PK</label>');
-    // _builder.push('</div><div class="col-xs-3">');
-    // _builder.push('<input class="form-control" id="Name' + field + '" placeholder="Name"></div>');
-    // _builder.push('<div class="col-xs-3"><input class="form-control" id="Type' + field + '" placeholder="Type">');
-    // _builder.push('</div><div class="col-xs-3">');
-    // _builder.push('<input class="form-control" id="Length' + field + '" placeholder="Lentgh"></div></div>');
-
-    _builder.push('<div class="form-group">');
-    _builder.push('<div class="form-check col-xs-3">');
-    _builder.push('<input type="checkbox" class="form-check-input" name="PK">');
-    _builder.push('<label class="form-check-label">PK</label>');
-    _builder.push('</div><div class="col-xs-3">');
-    _builder.push('<input class="form-control" name="Name" placeholder="Name"></div>');
-    _builder.push('<div class="col-xs-3"><input class="form-control" name="Type" placeholder="Type">');
-    _builder.push('</div><div class="col-xs-3">');
-    _builder.push('<input class="form-control" name="Length" placeholder="Length"></div></div>');
+    _builder.push(' <div class="form-group">' +
+                        '<div class="form-check col-xs-2">' +
+                            '<input type="checkbox" class="form-check-input" name="PK">' +
+                            '<label class="form-check-label">PK</label>' +
+                        '</div>' +
+                        '<div class="form-check col-xs-2">' +
+                            '<input type="checkbox" class="form-check-input" name="AI">' +
+                            '<label class="form-check-label">AI</label>' +
+                        '</div>' +
+                        '<div class="col-xs-3">' +
+                            '<input class="form-control" name="Name" placeholder="Name">' +
+                        '</div>' +
+                        '<div class="col-xs-3">' +
+                            '<input class="form-control" name="Type" placeholder="Type">' +
+                        '</div>' +
+                        '<div class="col-xs-2">' +
+                            '<input class="form-control" name="Length" placeholder="Lentgh">' +
+                        '</div>' +
+                    '</div>'
+                 );
 
     var _htmlToAdd = _builder.join('');
 
@@ -235,6 +243,7 @@ function CreateTable() {
     var _form = document.getElementById("createTableForm");
 
     var _PK = document.getElementsByName("PK");
+    var _AI = document.getElementsByName("AI")
     var _Name = document.getElementsByName("Name");
     var _Type = document.getElementsByName("Type");
     var _Length = document.getElementsByName("Length");
@@ -246,7 +255,8 @@ function CreateTable() {
     var FieldData = [];
 
     for (i = 0; i < _Name.length; i++) {
-        FieldData.push(_PK[i].checked + "; " + _Name[i].value + "; " + _Type[i].value + "; " + _Length[i].value);
+        FieldData.push(_PK[i].checked + ";" + _AI[i].checked + ";" + _Name[i].value + ";" +
+                            _Type[i].value + ";" + _Length[i].value);
     }
 
     var ToSend = {
@@ -258,14 +268,14 @@ function CreateTable() {
             url: "/Schema/Create",
             type: "POST",
             data: ToSend,
-            success: function (data) {
+            success: function () {
                 location.reload();
             }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            alert(errorThrown);
-            $("#createTableForm").show();
-            $("#createTableWork").addClass("hidden");
+        // })
+        // .fail(function (jqXHR, textStatus, errorThrown) {
+        //     alert(errorThrown);
+        //     $("#createTableForm").show();
+        //     $("#createTableWork").addClass("hidden");
         });
 
     return false;

@@ -59,8 +59,6 @@ namespace SQLManager.Controllers
                 TempData["Error"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-
         }
 
         public IActionResult Error()

@@ -16,8 +16,11 @@ namespace SQLManager.Controllers
             var _Data = new DataTable();
             List<string> _PrimaryKey = new List<string>();
 
-
-            if (Extensions.Connection[0].Equals("SQLite"))
+            if (Extensions.Connection[0].Equals("SQLServer"))
+            {
+                
+            }
+            else if (Extensions.Connection[0].Equals("SQLite"))
             {
                 using (var _conn = new SqliteConnection(Extensions.Connection[1]))
                 {
