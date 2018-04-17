@@ -18,7 +18,58 @@ namespace SQLManager.Controllers
 
             if (Extensions.Connection[0].Equals("SQLServer"))
             {
-                
+                using (var _conn = new SqlConnection(Extensions.Connection[1]))
+                {
+                    await _conn.OpenAsync();
+                    using (var _Command = _conn.CreateCommand())
+                    {
+                        _Command.CommandText = @"   SELECT COLUMN_NAME
+                                                    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                                                    WHERE OBJECTPROPERTY(
+                                                        OBJECT_ID(CONSTRAINT_SCHEMA + '.' + QUOTENAME(CONSTRAINT_NAME)),
+                                                        'IsPrimaryKey'
+                                                    ) = 1
+                                                    AND TABLE_NAME = '" + Name + "'";
+
+                        using (var _reader = await _Command.ExecuteReaderAsync())
+                        {
+                            while (await _reader.ReadAsync())
+                            {
+                                _PrimaryKey.Add(_reader.GetString(0));
+                            }
+                        }
+                    }
+
+                    using (var _Command = _conn.CreateCommand())
+                    {
+                        _Command.CommandText = @"   SELECT COLUMN_NAME
+                                                    FROM INFORMATION_SCHEMA.COLUMNS
+                                                    WHERE COLUMNPROPERTY(
+                                                        OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME),
+                                                        COLUMN_NAME,
+                                                        'IsIdentity'
+                                                    ) = 1
+                                                    AND TABLE_NAME = '" + Name + "'";
+
+                        using (var _reader = await _Command.ExecuteReaderAsync())
+                        {
+                            while (await _reader.ReadAsync())
+                            {
+                                ViewBag.AutoInc = _reader.GetString(0);
+                            }
+                        }
+                    }
+
+                    using (var _Command = _conn.CreateCommand())
+                    {
+                        _Command.CommandText = @"SELECT * FROM " + Name;
+
+                        using (var _reader = await _Command.ExecuteReaderAsync())
+                        {
+                            _Data.Load(_reader);
+                        }
+                    }
+                }
             }
             else if (Extensions.Connection[0].Equals("SQLite"))
             {

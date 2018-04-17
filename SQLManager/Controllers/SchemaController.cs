@@ -119,6 +119,8 @@ namespace SQLManager.Controllers
                 }
             }
 
+            ViewBag.Type = Extensions.Connection[0];
+
             return View(_Columns);
         }
 
