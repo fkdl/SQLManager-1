@@ -92,16 +92,16 @@ function Line(type) {
             success: function (data) {
                 location.reload();
             }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            alert(errorThrown);
-            if (type == "Add") {
-                $("#addLineForm").show();
-                $("#addLineWork").addClass("hidden");
-            } else {
-                $("#editLineForm").show();
-                $("#editLineWork").addClass("hidden");
-            }
+        // })
+        // .fail(function (jqXHR, textStatus, errorThrown) {
+        //     alert(errorThrown);
+        //     if (type == "Add") {
+        //         $("#addLineForm").show();
+        //         $("#addLineWork").addClass("hidden");
+        //     } else {
+        //         $("#editLineForm").show();
+        //         $("#editLineWork").addClass("hidden");
+        //     }
         });
 
     return false;
@@ -166,11 +166,11 @@ function RemoveLine() {
             success: function (data) {
                 location.reload();
             }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            alert(errorThrown);
-            $("#removeLineForm").show();
-            $("#removeLineWork").addClass("hidden");
+        // })
+        // .fail(function (jqXHR, textStatus, errorThrown) {
+        //     alert(errorThrown);
+        //     $("#removeLineForm").show();
+        //     $("#removeLineWork").addClass("hidden");
         });
 
     return false;

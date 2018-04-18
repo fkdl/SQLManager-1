@@ -76,10 +76,8 @@ namespace SQLManager.Controllers
                 using (var _conn = new SqliteConnection(Extensions.Connection[1]))
                 {
                     await _conn.OpenAsync();
-                    using (var _transaction = _conn.BeginTransaction())
+                    using (var _Command = _conn.CreateCommand())
                     {
-                        var _Command = _conn.CreateCommand();
-                        _Command.Transaction = _transaction;
                         _Command.CommandText = @"PRAGMA table_info('" + Name + "');";
 
                         using (var _reader = await _Command.ExecuteReaderAsync())
@@ -96,10 +94,8 @@ namespace SQLManager.Controllers
                         }
                     }
 
-                    using (var _transaction = _conn.BeginTransaction())
+                    using (var _Command = _conn.CreateCommand())
                     {
-                        var _Command = _conn.CreateCommand();
-                        _Command.Transaction = _transaction;
                         _Command.CommandText = @"SELECT * FROM " + Name;
 
                         using (var _reader = await _Command.ExecuteReaderAsync())
@@ -118,10 +114,8 @@ namespace SQLManager.Controllers
                         }
                     }
 
-                    using (var _transaction = _conn.BeginTransaction())
+                    using (var _Command = _conn.CreateCommand())
                     {
-                        var _Command = _conn.CreateCommand();
-                        _Command.Transaction = _transaction;
                         _Command.CommandText = @"SELECT * FROM sqlite_sequence WHERE name = '" + Name + "'";
 
                         using (var _reader = await _Command.ExecuteReaderAsync())
@@ -146,34 +140,70 @@ namespace SQLManager.Controllers
         [HttpPost]
         public async Task<int> Add(string[] InsertData, string FieldNames, string TableName)
         {
-            if (Extensions.Connection[0].Equals("SQLite"))
+            try
             {
-                using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                if (Extensions.Connection[0].Equals("SQLServer"))
                 {
-                    await _conn.OpenAsync();
-
-                    using (var _transaction = _conn.BeginTransaction())
+                    using (var _conn = new SqlConnection(Extensions.Connection[1]))
                     {
-                        var _Command = _conn.CreateCommand();
-                        _Command.Transaction = _transaction;
+                        await _conn.OpenAsync();
 
-                        var _parameters = "";
-
-                        for (int i = 0; i < InsertData.Length; i++)
+                        using (var _transaction = _conn.BeginTransaction())
                         {
-                            _parameters += @"$param" + i.ToString() + ", ";
-                            _Command.Parameters.AddWithValue("$param" + i.ToString(), InsertData[i]);
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+
+                            var _parameters = "";
+
+                            for (int i = 0; i < InsertData.Length; i++)
+                            {
+                                _parameters += @"@param" + i + ", ";
+                                _Command.Parameters.AddWithValue("@param" + i, InsertData[i]);
+                            }
+
+                            _Command.CommandText = @"INSERT INTO " + TableName + "(" +
+                                FieldNames.Remove(FieldNames.Length - 2) + ") VALUES (" +
+                                _parameters.Remove(_parameters.Length - 2) + ")";
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
                         }
-
-                        _Command.CommandText = @"INSERT INTO " + TableName + "(" +
-                            FieldNames.Remove(FieldNames.Length - 2) + ") VALUES (" +
-                            _parameters.Remove(_parameters.Length - 2) + ")";
-
-                        await _Command.ExecuteNonQueryAsync();
-
-                        _transaction.Commit();
                     }
                 }
+                else if (Extensions.Connection[0].Equals("SQLite"))
+                {
+                    using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                    {
+                        await _conn.OpenAsync();
+
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+
+                            var _parameters = "";
+
+                            for (int i = 0; i < InsertData.Length; i++)
+                            {
+                                _parameters += @"$param" + i + ", ";
+                                _Command.Parameters.AddWithValue("$param" + i, InsertData[i]);
+                            }
+
+                            _Command.CommandText = @"INSERT INTO " + TableName + "(" +
+                                FieldNames.Remove(FieldNames.Length - 2) + ") VALUES (" +
+                                _parameters.Remove(_parameters.Length - 2) + ")";
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
             }
 
             return 0;
@@ -182,37 +212,76 @@ namespace SQLManager.Controllers
         [HttpPost]
         public async Task<int> Edit(string[] InsertData, string FieldNames, string TableName, string[] PrimaryKey)
         {
-            if (Extensions.Connection[0].Equals("SQLite"))
+            try
             {
-                using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                if (Extensions.Connection[0].Equals("SQLServer"))
                 {
-                    await _conn.OpenAsync();
-
-                    using (var _transaction = _conn.BeginTransaction())
+                    using (var _conn = new SqlConnection(Extensions.Connection[1]))
                     {
-                        var _Command = _conn.CreateCommand();
-                        _Command.Transaction = _transaction;
+                        await _conn.OpenAsync();
 
-                        var _fields = FieldNames.Remove(FieldNames.Length - 2).Split(", ");
-                        var _command = "UPDATE " + TableName + " SET ";
-
-                        for (int i = 0; i < InsertData.Length; i++)
+                        using (var _transaction = _conn.BeginTransaction())
                         {
-                            _Command.Parameters.AddWithValue("$param" + i.ToString(), InsertData[i]);
-                            _command += _fields[i] + " = $param" + i.ToString() + ", ";
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+
+                            var _fields = FieldNames.Remove(FieldNames.Length - 2).Split(", ");
+                            var _command = "UPDATE " + TableName + " SET ";
+
+                            for (int i = 0; i < InsertData.Length; i++)
+                            {
+                                _Command.Parameters.AddWithValue("@param" + i, InsertData[i]);
+                                _command += _fields[i] + " = @param" + i + ", ";
+                            }
+
+                            _Command.Parameters.AddWithValue("@key", PrimaryKey[1]);
+
+                            _command = _command.Remove(_command.Length - 2) + " WHERE " + PrimaryKey[0] + " = @key";
+
+                            _Command.CommandText = _command;
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
                         }
-
-                        _Command.Parameters.AddWithValue("$key", PrimaryKey[1]);
-
-                        _command = _command.Remove(_command.Length - 2) + " WHERE " + PrimaryKey[0] + " = $key";
-
-                        _Command.CommandText = _command;
-
-                        await _Command.ExecuteNonQueryAsync();
-
-                        _transaction.Commit();
                     }
                 }
+                else if (Extensions.Connection[0].Equals("SQLite"))
+                {
+                    using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                    {
+                        await _conn.OpenAsync();
+
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+
+                            var _fields = FieldNames.Remove(FieldNames.Length - 2).Split(", ");
+                            var _command = "UPDATE " + TableName + " SET ";
+
+                            for (int i = 0; i < InsertData.Length; i++)
+                            {
+                                _Command.Parameters.AddWithValue("$param" + i, InsertData[i]);
+                                _command += _fields[i] + " = $param" + i + ", ";
+                            }
+
+                            _Command.Parameters.AddWithValue("$key", PrimaryKey[1]);
+
+                            _command = _command.Remove(_command.Length - 2) + " WHERE " + PrimaryKey[0] + " = $key";
+
+                            _Command.CommandText = _command;
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
             }
 
             return 0;
@@ -221,25 +290,52 @@ namespace SQLManager.Controllers
         [HttpPost]
         public async Task<int> Remove(string[] RemoveKey, string TableName)
         {
-            if (Extensions.Connection[0].Equals("SQLite"))
+            try
             {
-                using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                if (Extensions.Connection[0].Equals("SQLServer"))
                 {
-                    await _conn.OpenAsync();
-
-                    using (var _transaction = _conn.BeginTransaction())
+                    using (var _conn = new SqlConnection(Extensions.Connection[1]))
                     {
-                        var _Command = _conn.CreateCommand();
-                        _Command.Transaction = _transaction;
+                        await _conn.OpenAsync();
 
-                        _Command.Parameters.AddWithValue("$key", RemoveKey[1]);
-                        _Command.CommandText = "DELETE FROM " + TableName + " WHERE " + RemoveKey[0] + " = $key";
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
 
-                        await _Command.ExecuteNonQueryAsync();
+                            _Command.Parameters.AddWithValue("@key", RemoveKey[1]);
+                            _Command.CommandText = "DELETE FROM " + TableName + " WHERE " + RemoveKey[0] + " = @key";
 
-                        _transaction.Commit();
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
                     }
                 }
+                else if (Extensions.Connection[0].Equals("SQLite"))
+                {
+                    using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                    {
+                        await _conn.OpenAsync();
+
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+
+                            _Command.Parameters.AddWithValue("$key", RemoveKey[1]);
+                            _Command.CommandText = "DELETE FROM " + TableName + " WHERE " + RemoveKey[0] + " = $key";
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
             }
 
             return 0;

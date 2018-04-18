@@ -1,3 +1,10 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
+using Microsoft.Data.Sqlite;
+
 namespace SQLManager
 {
     public abstract class Extensions
