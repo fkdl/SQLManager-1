@@ -138,7 +138,7 @@ namespace SQLManager.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Add(string[] InsertData, string FieldNames, string TableName)
+        public async Task<string> Add(string[] InsertData, string FieldNames, string TableName)
         {
             try
             {
@@ -203,14 +203,15 @@ namespace SQLManager.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                //TempData["Error"] = ex.Message;
+                return ex.Message;
             }
 
-            return 0;
+            return "OK";
         }
 
         [HttpPost]
-        public async Task<int> Edit(string[] InsertData, string FieldNames, string TableName, string[] PrimaryKey)
+        public async Task<string> Edit(string[] InsertData, string FieldNames, string TableName, string[] PrimaryKey)
         {
             try
             {
@@ -281,14 +282,15 @@ namespace SQLManager.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                //TempData["Error"] = ex.Message;
+                return ex.Message;
             }
 
-            return 0;
+            return "OK";
         }
 
         [HttpPost]
-        public async Task<int> Remove(string[] RemoveKey, string TableName)
+        public async Task<string> Remove(string[] RemoveKey, string TableName)
         {
             try
             {
@@ -335,10 +337,10 @@ namespace SQLManager.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                return ex.Message;
             }
 
-            return 0;
+            return "OK";
         }
     }
 }

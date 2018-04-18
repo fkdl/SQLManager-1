@@ -42,8 +42,18 @@ namespace SQLManager.Controllers
         {
             try
             {
-                var _connection = "Data Source=" + _server + ";Initial Catalog=" + _db +
-                    ";User id=" + _user + ";Password=" + _pass + ";";
+                var _connection = "";
+
+                if (_db != null)
+                {
+                    _connection = "Data Source=" + _server + ";Initial Catalog=" + _db +
+                        ";User id=" + _user + ";Password=" + _pass + ";";
+                }
+                else
+                {
+                    _connection = "Data Source=" + _server + 
+                        ";User id=" + _user + ";Password=" + _pass + ";";
+                }
 
                 using (SqlConnection _conn = new SqlConnection(_connection))
                 {
@@ -52,7 +62,15 @@ namespace SQLManager.Controllers
 
                 Extensions.Connection[0] = "SQLServer";
                 Extensions.Connection[1] = _connection;
-                return RedirectToAction("Index", "Schema");
+
+                if (_db != null)
+                {
+                    return RedirectToAction("Index", "Schema");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Database");
+                }
             }
             catch (Exception ex)
             {

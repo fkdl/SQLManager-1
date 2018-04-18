@@ -86,23 +86,44 @@ function Line(type) {
     }
 
     $.ajax({
-            url: _url,
-            type: "POST",
-            data: ToSend,
-            success: function (data) {
+        url: _url,
+        type: "POST",
+        data: ToSend,
+        success: function (data) {
+            if (data == "OK") {
                 location.reload();
+            } else {
+                if (type == "Add") {
+                    $("#addLineForm").show();
+                    $("#addLineWork").addClass("hidden");
+                    $("#addModalError").append(
+                        '<div class="row">' +
+                        '<div class="alert alert-danger">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">' +
+                        '&times;' +
+                        '</button>' +
+                        '<strong>' + data + '</strong>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                } else {
+                    $("#editLineForm").show();
+                    $("#editLineWork").addClass("hidden");
+                    $("#editModalError").append(
+                        '<div class="row">' +
+                        '<div class="alert alert-danger">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">' +
+                        '&times;' +
+                        '</button>' +
+                        '<strong>' + data + '</strong>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                }
+
             }
-        // })
-        // .fail(function (jqXHR, textStatus, errorThrown) {
-        //     alert(errorThrown);
-        //     if (type == "Add") {
-        //         $("#addLineForm").show();
-        //         $("#addLineWork").addClass("hidden");
-        //     } else {
-        //         $("#editLineForm").show();
-        //         $("#editLineWork").addClass("hidden");
-        //     }
-        });
+        }
+    });
 
     return false;
 }
@@ -160,18 +181,29 @@ function RemoveLine() {
     };
 
     $.ajax({
-            url: "/Table/Remove",
-            type: "POST",
-            data: ToSend,
-            success: function (data) {
+        url: "/Table/Remove",
+        type: "POST",
+        data: ToSend,
+        success: function (data) {
+            if (data == "OK") {
                 location.reload();
+            } else {
+                $("#removeLineForm").show();
+                $("#removeLineWork").addClass("hidden");
+                $("#removeLineError").append(
+                    '<div class="row">' +
+                    '<div class="alert alert-danger">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">' +
+                    '&times;' +
+                    '</button>' +
+                    '<strong>' + data + '</strong>' +
+                    '</div>' +
+                    '</div>'
+                );
             }
-        // })
-        // .fail(function (jqXHR, textStatus, errorThrown) {
-        //     alert(errorThrown);
-        //     $("#removeLineForm").show();
-        //     $("#removeLineWork").addClass("hidden");
-        });
+
+        }
+    });
 
     return false;
 }
@@ -182,7 +214,7 @@ function ResetTable() {
     var _form = document.getElementById("createTableForm");
 
     _form.reset();
-    
+
     document.getElementById("createTableFields").innerHTML = LineFields();
 }
 
@@ -199,55 +231,54 @@ function LineFields() {
 
     if (document.getElementById('SqlType').value == 'SQLServer') {
         _type = '<datalist id="types">' +
-                    '<option value="INT">' +
-                    '<option value="BIGINT">' +
-                    '<option value="SMALLINT">' +
-                    '<option value="NUMERIC">' +
-                    '<option value="DECIMAL">' +
-                    '<option value="FLOAT">' +
-                    '<option value="REAL">' +
-                    '<option value="DATE">' +
-                    '<option value="TIME">' +
-                    '<option value="DATETIME">' +
-                    '<option value="DATETIME2">' +
-                    '<option value="CHAR">' +
-                    '<option value="VARCHAR">' +
-                    '<option value="TEXT">' +
-                    '<option value="NCHAR">' +
-                    '<option value="NVARCHAR">' +
-                    '<option value="NTEXT">' +
-                '</datalist>';
-    }
-    else if (document.getElementById('SqlType').value == 'SQLite') {
+            '<option value="INT">' +
+            '<option value="BIGINT">' +
+            '<option value="SMALLINT">' +
+            '<option value="NUMERIC">' +
+            '<option value="DECIMAL">' +
+            '<option value="FLOAT">' +
+            '<option value="REAL">' +
+            '<option value="DATE">' +
+            '<option value="TIME">' +
+            '<option value="DATETIME">' +
+            '<option value="DATETIME2">' +
+            '<option value="CHAR">' +
+            '<option value="VARCHAR">' +
+            '<option value="TEXT">' +
+            '<option value="NCHAR">' +
+            '<option value="NVARCHAR">' +
+            '<option value="NTEXT">' +
+            '</datalist>';
+    } else if (document.getElementById('SqlType').value == 'SQLite') {
         _type = '<datalist id="types">' +
-                    '<option value="INTEGER">' +
-                    '<option value="REAL">' +
-                    '<option value="TEXT">' +
-                    '<option value="BLOB">' +
-                '</datalist>';
+            '<option value="INTEGER">' +
+            '<option value="REAL">' +
+            '<option value="TEXT">' +
+            '<option value="BLOB">' +
+            '</datalist>';
     }
 
     _builder.push(' <div class="form-group">' +
-                        '<div class="form-check col-xs-2">' +
-                            '<input type="checkbox" class="form-check-input" name="PK">' +
-                            '<label class="form-check-label">PK</label>' +
-                        '</div>' +
-                        '<div class="form-check col-xs-2">' +
-                            '<input type="checkbox" class="form-check-input" name="AI">' +
-                            '<label class="form-check-label">AI</label>' +
-                        '</div>' +
-                        '<div class="col-xs-3">' +
-                            '<input class="form-control" name="Name" placeholder="Name">' +
-                        '</div>' +
-                        '<div class="col-xs-3">' +
-                            '<input class="form-control" name="Type" list="types" placeholder="Type">' +
-                            _type +
-                        '</div>' +
-                        '<div class="col-xs-2">' +
-                            '<input class="form-control" name="Length" placeholder="Lentgh">' +
-                        '</div>' +
-                    '</div>'
-                 );
+        '<div class="form-check col-xs-2">' +
+        '<input type="checkbox" class="form-check-input" name="PK">' +
+        '<label class="form-check-label">PK</label>' +
+        '</div>' +
+        '<div class="form-check col-xs-2">' +
+        '<input type="checkbox" class="form-check-input" name="AI">' +
+        '<label class="form-check-label">AI</label>' +
+        '</div>' +
+        '<div class="col-xs-3">' +
+        '<input class="form-control" name="Name" placeholder="Name">' +
+        '</div>' +
+        '<div class="col-xs-3">' +
+        '<input class="form-control" name="Type" list="types" placeholder="Type">' +
+        _type +
+        '</div>' +
+        '<div class="col-xs-2">' +
+        '<input class="form-control" name="Length" placeholder="Lentgh">' +
+        '</div>' +
+        '</div>'
+    );
 
     return _builder.join('');
 }
@@ -269,7 +300,7 @@ function CreateTable() {
 
     for (i = 0; i < _Name.length; i++) {
         FieldData.push(_PK[i].checked + ";" + _AI[i].checked + ";" + _Name[i].value + ";" +
-                            _Type[i].value + ";" + _Length[i].value);
+            _Type[i].value + ";" + _Length[i].value);
     }
 
     var ToSend = {
@@ -278,13 +309,13 @@ function CreateTable() {
     };
 
     $.ajax({
-            url: "/Schema/Create",
-            type: "POST",
-            data: ToSend,
-            success: function () {
-                location.reload();
-            }
-        });
+        url: "/Schema/Create",
+        type: "POST",
+        data: ToSend,
+        success: function () {
+            location.reload();
+        }
+    });
 
     return false;
 }

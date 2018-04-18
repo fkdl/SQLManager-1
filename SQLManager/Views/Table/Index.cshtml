@@ -2,19 +2,10 @@
 @model System.Data.DataTable
 @{int line = 1;}
 
-@if (TempData.ContainsKey("Error"))
-{
-    <div class="row">
-        <div class="alert alert-danger">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                &times;
-            </button>
-            <strong>@TempData["Error"]</strong>
-        </div>
-    </div>
-}
-
 <div class="container" style="margin-top: 2vh; padding-bottom: 10vh;">
+    <div class="row">
+        <h2>@(ViewBag.Table)</h2>
+    </div>
     <div class="row">
         <div class="table-responsive">
             <table class="table table-hover" id="LinesTable">
@@ -80,7 +71,8 @@
             <div class="modal-header">
                 <h3 class="modal-title">Add new Data</h3>
             </div>
-            <div class="modal-body" id="addModalBody">
+            <div class="modal-body">
+                <div id="addModalError"></div>
                 <form class="form-horizontal" onsubmit="return Line('Add')" id="addLineForm" autocomplete="off">
                     @foreach (DataColumn _column in Model.Columns)
                     {
@@ -119,6 +111,7 @@
                 <h3 class="modal-title">Edit Line Data</h3>
             </div>
             <div class="modal-body">
+                <div id="editModalError"></div>
                 <form class="form-horizontal" autocomplete="off" id="editLineForm" onsubmit="return Line('Edit')">
                     @foreach (DataColumn _column in Model.Columns)
                     {
@@ -173,6 +166,7 @@
                 <h3 class="modal-title">Remove Line Data</h3>
             </div>
             <div class="modal-body">
+                <div id="removeLineError"></div>
                 <form class="form-horizontal" autocomplete="off" id="removeLineForm" onsubmit="return RemoveLine()">
                     <h3>Please confirm line data deletion</h3>
                     <div class="form-group">
