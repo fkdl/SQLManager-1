@@ -1,0 +1,23 @@
+@model List<string>
+@{ int _cnt = 1; }
+
+<div class="row" style="padding-top: 5vh;">
+    @foreach (var _element in Model)
+    {
+        <div class="col-xs-3">
+                <div class="panel panel-info" style="border-radius: 0;">
+                    <div class="panel-heading" style="border-radius: 0;">
+                        <a asp-action="Index" asp-controller="Database" asp-route-Name="@(_element)">
+                            @_element
+                        </a>
+                    </div>
+                </div>
+            </div>
+            if (_cnt % 4 == 0)
+            {
+                <div class="clearfix"></div>
+            }
+
+            _cnt++;
+    }
+</div>

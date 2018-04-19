@@ -27,7 +27,7 @@ namespace SQLManager.Controllers
                 Extensions.Connection[0] = "SQLite";
                 Extensions.Connection[1] = "Data Source=" + _server;
 
-                return RedirectToAction("Index", "Schema");
+                return RedirectToAction("Index", "Database");
             }
             else
             {
@@ -46,8 +46,8 @@ namespace SQLManager.Controllers
 
                 if (_db != null)
                 {
-                    _connection = "Data Source=" + _server + ";Initial Catalog=" + _db +
-                        ";User id=" + _user + ";Password=" + _pass + ";";
+                    _connection = "Data Source=" + _server + ";User id=" + _user + ";Password=" +
+                        _pass + ";Initial Catalog=" + _db;
                 }
                 else
                 {
@@ -65,11 +65,11 @@ namespace SQLManager.Controllers
 
                 if (_db != null)
                 {
-                    return RedirectToAction("Index", "Schema");
+                    return RedirectToAction("Index", "Database");
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Database");
+                    return RedirectToAction("Index", "Databases");
                 }
             }
             catch (Exception ex)

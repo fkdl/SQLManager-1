@@ -1,15 +1,38 @@
-@model List<string>
+@model Dictionary<string, List<Tuple<string, string>>>
 @{ int _cnt = 1; }
 
-<div class="row" style="padding-top: 5vh;">
-    @foreach (var _element in Model)
-    {
-        <div class="col-xs-3">
+@{ ViewData["Title"] = "Database Schema"; }
+
+@if (TempData.ContainsKey("Error"))
+{
+    <div class="row">
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                &times;
+            </button>
+            <strong>@TempData["Error"]</strong>
+        </div>
+    </div>
+}
+
+<div style="padding-top: 5vh; padding-bottom: 10vh;
+        border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+    <div class="row">
+        @foreach (var _table in Model)
+        {
+            <div class="col-xs-3">
                 <div class="panel panel-info" style="border-radius: 0;">
                     <div class="panel-heading" style="border-radius: 0;">
-                        <a asp-action="Index" asp-controller="Schema">
-                            @_element
+                        @_table.Key
+                        <a asp-action="Index" asp-controller="Table" asp-route-Name="@_table.Key" class="pull-right">
+                            <i class="fas fa-angle-double-right" style="font-size: 120%"></i>
                         </a>
+                    </div>
+                    <div class="panel-body" style="border-radius: 0;">
+                        @foreach (var _column in _table.Value)
+                        {
+                            <p><i class="fa fa-key"></i> @_column.Item1, @_column.Item2.ToLower()</p>
+                        }
                     </div>
                 </div>
             </div>
@@ -19,5 +42,72 @@
             }
 
             _cnt++;
-    }
+        }
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-xs-3">
+            <div class="panel panel-info" style="border-radius: 0;">
+                <div class="panel-heading" style="border-radius: 0;">
+                    Add Table
+                </div>
+                <div class="panel-body text-center" style="border-radius: 0;">
+                    <a data-toggle="modal" data-target="#createTable" id="createTableLink" onclick="ResetTable()">
+                        <i class="fa fa-plus-circle" style="font-size: 300%;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <a class="btn btn-primary col-xs-1" role="button" asp-action="Index" asp-controller="Home">
+        Back
+    </a>
+</div>
+
+<!-- New table modal -->
+<div class="modal fade" id="createTable" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Table</h3>
+            </div>
+            <div class="modal-body">
+                <div id="createTableError"></div>
+                <form class="form-horizontal" onsubmit="return CreateTable()" id="createTableForm" autocomplete="off">
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Table Name</label>
+                        <div class="col-xs-9">
+                            <input class="form-control" id="TableName">
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="createTableFields">
+                        <!-- JS generated field lines -->
+                    </div>
+
+                    <div>
+                        <input type="hidden" id="SqlType" value="@(ViewBag.Type)">
+                        <a href="" onclick="return AddField()">Add Field</a>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Commit</button>
+                        <a class="btn btn-default" onclick='$("#createTable").modal("toggle");'>Close</a>
+                    </div>
+                </form>
+                
+                <div class="hidden" id="createTableWork">
+                    Working On It...
+                    <div class="fa-3x text-center">
+                        <i class="fas fa-cog fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

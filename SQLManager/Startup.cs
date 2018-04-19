@@ -39,11 +39,22 @@ namespace SQLManager
 
             app.UseStaticFiles();
 
+            // app.UseMvc(routes =>
+            // {
+            //     routes.MapRoute(
+            //         name: "default",
+            //         //template: "{controller=Home}/{action=Index}/{Name?}");
+            //         template: "{controller}",
+            //         defaults: new { controller = "Home", action = "Index"});
+            // });
+
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{Name?}");
+                routes.MapRoute("table", "Table/{Name?}",
+                        defaults: new { controller = "Table", action = "Index" });
+                routes.MapRoute("database", "Database/{Name?}",
+                        defaults: new { controller = "Database", action = "Index" });
+                routes.MapRoute("default", "{controller=Home}/{action=Index}/{Name?}");
             });
         }
     }
