@@ -71,8 +71,6 @@ namespace SQLManager.Controllers
                         }
                     }
                 }
-
-                ViewBag.Database = Extensions.Connection[1].Split('=').Last();
             }
             else if (Extensions.Connection[0].Equals("SQLite"))
             {
@@ -136,6 +134,8 @@ namespace SQLManager.Controllers
             ViewBag.Title = "View " + Name + " data";
             ViewBag.Table = Name;
             ViewBag.PrimaryKey = _PrimaryKey;
+            ViewBag.Database = Extensions.Connection[1].Split('=').Last();
+            ViewBag.Type = Extensions.Connection[0];
 
             return View(_Data);
         }

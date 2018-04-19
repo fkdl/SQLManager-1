@@ -63,17 +63,18 @@
     <hr />
 
     <div class="row">
-        <div class="col-xs-12">
-            <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Database" asp-route-Name="@(ViewBag.Database)">
-                Change Table
-            </a>
+        <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Database" asp-route-Name="@(ViewBag.Database)">
+            Change Table
+        </a>
+        @if (ViewBag.Type != "SQLite")
+        {
             <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Databases">
                 Change Database
             </a>
-            <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Home">
-                Change Connection
-            </a>
-        </div>
+        }
+        <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Home">
+            Change Connection
+        </a>
     </div>
 
     <input type="hidden" id="TableName" value="@(ViewBag.Table)">
