@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 
 namespace SQLManager.Controllers
 {
-    public class TableMethodsController : Controller
+    public class TableMethodsController
     {
         [HttpPost]
         public async Task<string> Add(string[] InsertData, string FieldNames, string TableName)

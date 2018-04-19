@@ -16,6 +16,18 @@ namespace SQLManager.Controllers
 
             if (Extensions.Connection[0].Equals("SQLServer"))
             {
+                if (Extensions.Connection[1].Contains("Initial Catalog="))
+                {
+                    var _toReplace = Extensions.Connection[1].IndexOf("Initial Catalog=");
+
+                    Extensions.Connection[1] = Extensions.Connection[1].Replace(
+                        Extensions.Connection[1].Substring(_toReplace),
+                        "Initial Catalog=" + Name);
+                }
+                else
+                {
+                    Extensions.Connection[1] += ";Initial Catalog=" + Name;
+                }
                 using (var _conn = new SqlConnection(Extensions.Connection[1]))
                 {
                     await _conn.OpenAsync();

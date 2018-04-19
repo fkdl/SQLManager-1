@@ -27,7 +27,7 @@ namespace SQLManager.Controllers
                 Extensions.Connection[0] = "SQLite";
                 Extensions.Connection[1] = "Data Source=" + _server;
 
-                return RedirectToAction("Index", "Database");
+                return RedirectToAction("Index", "Database", new { Name = _server });
             }
             else
             {
@@ -51,8 +51,7 @@ namespace SQLManager.Controllers
                 }
                 else
                 {
-                    _connection = "Data Source=" + _server + 
-                        ";User id=" + _user + ";Password=" + _pass + ";";
+                    _connection = "Data Source=" + _server + ";User id=" + _user + ";Password=" + _pass;
                 }
 
                 using (SqlConnection _conn = new SqlConnection(_connection))
@@ -65,7 +64,7 @@ namespace SQLManager.Controllers
 
                 if (_db != null)
                 {
-                    return RedirectToAction("Index", "Database");
+                    return RedirectToAction("Index", "Database", new { Name = _db });
                 }
                 else
                 {

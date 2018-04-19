@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Data;
@@ -70,6 +71,8 @@ namespace SQLManager.Controllers
                         }
                     }
                 }
+
+                ViewBag.Database = Extensions.Connection[1].Split('=').Last();
             }
             else if (Extensions.Connection[0].Equals("SQLite"))
             {

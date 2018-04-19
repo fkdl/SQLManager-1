@@ -51,14 +51,29 @@
             </table>
         </div>
     </div>
+
     <hr />
+
     <div class="row">
         <a class="btn btn-primary col-xs-1" role="button" data-toggle="modal" data-target="#addLine" onclick="ResetLine()">
             Add line
         </a>
-        <a class="btn btn-primary col-xs-1" role="button" asp-action="Index" asp-controller="Database" style="margin-left: 1vw;">
-            Back
-        </a>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-xs-12">
+            <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Database" asp-route-Name="@(ViewBag.Database)">
+                Change Table
+            </a>
+            <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Databases">
+                Change Database
+            </a>
+            <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Home">
+                Change Connection
+            </a>
+        </div>
     </div>
 
     <input type="hidden" id="TableName" value="@(ViewBag.Table)">
