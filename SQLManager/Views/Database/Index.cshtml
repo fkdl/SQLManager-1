@@ -1,7 +1,6 @@
+@using System.Linq;
 @model Dictionary<string, List<Tuple<string, string>>>
 @{ int _cnt = 1; }
-
-@{ ViewData["Title"] = "Database Schema"; }
 
 @if (TempData.ContainsKey("Error"))
 {
@@ -29,9 +28,24 @@
                         </a>
                     </div>
                     <div class="panel-body" style="border-radius: 0;">
-                        @foreach (var _column in _table.Value)
+                        @if (_table.Value.Count != 0)
                         {
-                            <p><i class="fa fa-key"></i> @_column.Item1, @_column.Item2.ToLower()</p>
+                            foreach (var _column in _table.Value)
+                            {
+                                if(_column != _table.Value.Last())
+                                {
+                                    <i class="fa fa-key"></i> <sapn>@(_column.Item1) @(_column.Item2.ToLower())</sapn>
+                                    <br />
+                                }
+                                else
+                                {
+                                    <i class="fa fa-key"></i> <sapn>@(_column.Item1) @(_column.Item2.ToLower())</sapn>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <span>No Primary Key found</span>
                         }
                     </div>
                 </div>
@@ -66,9 +80,12 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Databases">
-                Change Database
-            </a>
+            @if (ViewBag.Type != "SQLite")
+            {
+                <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Databases">
+                    Change Database
+                </a>
+            }
             <a class="btn btn-primary" role="button" asp-action="Index" asp-controller="Home">
                 Change Connection
             </a>

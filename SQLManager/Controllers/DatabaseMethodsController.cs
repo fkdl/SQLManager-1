@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using MySql.Data.MySqlClient;
@@ -19,6 +20,69 @@ namespace SQLManager.Controllers
                     throw new System.Exception("No valid Table Name provided");
                 }
 
+                var _pk = new List<string>();
+
+                var _cmd = "CREATE TABLE " + TableName + " (";
+
+                foreach (var _element in FieldData)
+                {
+                    var _line = _element.Split(";");
+
+                    if (_line[2].Length > 0)
+                    {
+                        if (_line[4].Length > 0)
+                        {
+                            _cmd += _line[2] + " " + _line[3] + "(" + _line[4] + ")";
+                        }
+                        else
+                        {
+                            _cmd += _line[2] + " " + _line[3];
+                        }
+
+                        if (_line[0].Equals("true") && _line[1].Equals("false"))
+                        {
+                            if (Extensions.Connection[0].Equals("SQLServer"))
+                            {
+                                _cmd += ", ";
+                                _pk.Add(_line[2]);
+                            }
+                            else if (Extensions.Connection[0].Equals("SQLite"))
+                            {
+                                _cmd += "PRIMARY KEY, ";
+                            }
+                        }
+                        else if (_line[1].Equals("true"))
+                        {
+                            if (Extensions.Connection[0].Equals("SQLServer"))
+                            {
+                                _cmd += " IDENTITY(1,1), ";
+                                _pk.Add(_line[2]);
+                            }
+                            else if (Extensions.Connection[0].Equals("SQLite"))
+                            {
+                                _cmd += " PRIMARY KEY AUTOINCREMENT, ";
+                            }
+                        }
+                        else
+                        {
+                            _cmd += ", ";
+                        }
+                    }
+                }
+
+                if (_pk.Count > 0)
+                {
+                    _cmd += " PRIMARY KEY(";
+                    foreach (var _element in _pk)
+                    {
+                        _cmd += _element + ", ";
+                    }
+
+                    _cmd = _cmd.Remove(_cmd.Length - 2) + "), ";
+                }
+
+                _cmd = _cmd.Remove(_cmd.Length - 2) + ")";
+
                 if (Extensions.Connection[0].Equals("SQLServer"))
                 {
                     using (var _conn = new SqlConnection(Extensions.Connection[1]))
@@ -28,36 +92,8 @@ namespace SQLManager.Controllers
                         {
                             var _Command = _conn.CreateCommand();
                             _Command.Transaction = _transaction;
-                            _Command.CommandText = "CREATE TABLE " + TableName + " (";
 
-                            foreach (var _element in FieldData)
-                            {
-                                var _line = _element.Split(";");
-
-                                if (_line[4].Length > 0)
-                                {
-                                    _Command.CommandText += _line[2] + " " + _line[3] + "(" + _line[4] + ")";
-                                }
-                                else
-                                {
-                                    _Command.CommandText += _line[2] + " " + _line[3];
-                                }
-
-                                if (_line[0] == "true" && _line[1] == "false")
-                                {
-                                    _Command.CommandText += " PRIMARY KEY, ";
-                                }
-                                else if (_line[1] == "true")
-                                {
-                                    _Command.CommandText += " IDENTITY(1,1) PRIMARY KEY, ";
-                                }
-                                else
-                                {
-                                    _Command.CommandText += ", ";
-                                }
-                            }
-
-                            _Command.CommandText = _Command.CommandText.Remove(_Command.CommandText.Length - 2) + ")";
+                            _Command.CommandText = _cmd;
 
                             await _Command.ExecuteNonQueryAsync();
 
@@ -74,27 +110,8 @@ namespace SQLManager.Controllers
                         {
                             var _Command = _conn.CreateCommand();
                             _Command.Transaction = _transaction;
-                            _Command.CommandText = "CREATE TABLE " + TableName + " (";
 
-                            foreach (var _element in FieldData)
-                            {
-                                var _line = _element.Split(";");
-
-                                if (_line[0] == "true" && _line[1] == "false")
-                                {
-                                    _Command.CommandText += _line[2] + " " + _line[3] + " PRIMARY KEY, ";
-                                }
-                                else if (_line[1] == "true")
-                                {
-                                    _Command.CommandText += _line[2] + " " + _line[3] + " PRIMARY KEY AUTOINCREMENT, ";
-                                }
-                                else
-                                {
-                                    _Command.CommandText += _line[2] + " " + _line[3] + ", ";
-                                }
-                            }
-
-                            _Command.CommandText = _Command.CommandText.Remove(_Command.CommandText.Length - 2) + ")";
+                            _Command.CommandText = _cmd;
 
                             await _Command.ExecuteNonQueryAsync();
 

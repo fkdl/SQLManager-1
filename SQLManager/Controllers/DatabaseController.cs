@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
@@ -58,7 +59,6 @@ namespace SQLManager.Controllers
                             {
                                 if (_reader.GetString(1) != "0")
                                 {
-
                                     if (!_Columns.TryAdd(_reader.GetString(0),
                                             new List<Tuple<string, string>>{
                                                 Tuple.Create(_reader.GetString(1),
@@ -131,6 +131,7 @@ namespace SQLManager.Controllers
                 }
             }
 
+            ViewBag.Title = Name + " tables";
             ViewBag.Type = Extensions.Connection[0];
 
             return View(_Columns);
