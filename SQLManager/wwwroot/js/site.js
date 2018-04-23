@@ -329,3 +329,46 @@ function CreateTable() {
 
     return false;
 }
+
+function DropTableModal(name) {
+    $("#dropTableHeader").append('<p>Please confirm table\'s ' + name + ' removal</p>');
+
+    document.getElementById("dropTableName").value = name;
+
+    return false;
+}
+
+function DropTable() {
+    $("#dropTableForm").hide();
+    $("#dropTableWork").removeClass("hidden");
+    $("#dropTableWork").show();
+
+    var ToSend = {
+        Table: document.getElementById("dropTableName").value
+    };
+
+    $.ajax({
+        url: "/DatabaseMethods/Drop",
+        type: "POST",
+        data: ToSend,
+        success: function (data) {
+            if (data == "OK") {
+                location.reload();
+            } else {
+                $("#dropTableForm").show();
+                $("#dropTableWork").addClass("hidden");
+                document.getElementById("dropTableError").innerHTML =
+                    '<div class="row">' +
+                    '<div class="alert alert-danger">' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">' +
+                    '&times;' +
+                    '</button>' +
+                    '<strong>' + data + '</strong>' +
+                    '</div>' +
+                    '</div>';
+            }
+        }
+    });
+
+    return false;
+}

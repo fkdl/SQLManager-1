@@ -127,5 +127,55 @@ namespace SQLManager.Controllers
 
             return "OK";
         }
+
+        [HttpPost]
+        public async Task<string> Drop(string Table)
+        {
+            try
+            {
+                if (Extensions.Connection[0].Equals("SQLServer"))
+                {
+                    using (var _conn = new SqlConnection(Extensions.Connection[1]))
+                    {
+                        await _conn.OpenAsync();
+
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+                            _Command.CommandText = @"DROP TABLE " + Table;
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
+                    }
+                }
+                else if (Extensions.Connection[0].Equals("SQLite"))
+                {
+                    using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                    {
+                        await _conn.OpenAsync();
+
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+                            _Command.CommandText = @"DROP TABLE " + Table;
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return "OK";
+        }
     }
 }
