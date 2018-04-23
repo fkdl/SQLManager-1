@@ -17,6 +17,12 @@ namespace SQLManager.Controllers
             var _Data = new DataTable();
             List<string> _PrimaryKey = new List<string>();
 
+            if (Extensions.Connection[0] == null)
+            {
+                TempData["Error"] = "Seems like you are not connected to a database yet.";
+                return RedirectToAction("Index", "Home");
+            }
+
             if (Extensions.Connection[0].Equals("SQLServer"))
             {
                 using (var _conn = new SqlConnection(Extensions.Connection[1]))
@@ -123,7 +129,6 @@ namespace SQLManager.Controllers
                         {
                             if (_reader.HasRows && _PrimaryKey.Count > 0)
                             {
-                                //Auto increment must be first
                                 ViewBag.AutoInc = _PrimaryKey[0];
                             }
                         }

@@ -13,6 +13,13 @@ namespace SQLManager.Controllers
         public async Task<IActionResult> Index()
         {
             ViewBag.Title = "All Databases";
+
+            if (Extensions.Connection[0] == null)
+            {
+                TempData["Error"] = "Seems like you are not connected to a database yet.";
+                return RedirectToAction("Index", "Home");
+            }
+
             if (Extensions.Connection[0].Equals("SQLServer"))
             {
                 using (var _conn = new SqlConnection(Extensions.Connection[1]))

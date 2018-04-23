@@ -112,7 +112,6 @@ namespace SQLManager.Controllers
 
                 Extensions.Connection[0] = "MySQL";
                 Extensions.Connection[1] = _connection.ToString();
-                var _t = _connection.ToString();
 
                 if (_db != null)
                 {
