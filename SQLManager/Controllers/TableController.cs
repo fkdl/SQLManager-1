@@ -135,6 +135,60 @@ namespace SQLManager.Controllers
                     }
                 }
             }
+            else if (Extensions.Connection[0].Equals("MySQL"))
+            {
+                using (var _conn = new MySqlConnection(Extensions.Connection[1]))
+                {
+                    await _conn.OpenAsync();
+
+                    using (var _Command = _conn.CreateCommand())
+                    {
+                        _Command.CommandText = @"SELECT T0.COLUMN_NAME
+                                                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE T0
+                                                WHERE
+                                                    T0.TABLE_SCHEMA = '" + Extensions.Connection[1].Split('=').Last() + @"'
+                                                    AND TABLE_NAME = '" + Name + @"'
+                                                    AND T0.CONSTRAINT_NAME='PRIMARY'
+                                                ORDER BY TABLE_NAME";
+                        
+                        using (var _reader = await _Command.ExecuteReaderAsync())
+                        {
+                            while (await _reader.ReadAsync())
+                            {
+                                _PrimaryKey.Add(_reader.GetString(0));
+                            }
+                        }
+                    }
+
+                    using (var _Command = _conn.CreateCommand())
+                    {
+                        _Command.CommandText = @"SELECT COLUMN_NAME
+                                                FROM INFORMATION_SCHEMA.COLUMNS
+                                                WHERE
+                                                    TABLE_SCHEMA = '" + Extensions.Connection[1].Split('=').Last() + @"'
+                                                    AND TABLE_NAME = '" + Name + @"'
+                                                    AND EXTRA = 'AUTO_INCREMENT'";
+                        
+                        using (var _reader = await _Command.ExecuteReaderAsync())
+                        {
+                            while (await _reader.ReadAsync())
+                            {
+                                ViewBag.AutoInc = _reader.GetString(0);
+                            }
+                        }
+                    }
+
+                    using (var _Command = _conn.CreateCommand())
+                    {
+                        _Command.CommandText = @"SELECT * FROM " + Name;
+
+                        using (var _reader = await _Command.ExecuteReaderAsync())
+                        {
+                            _Data.Load(_reader);
+                        }
+                    }
+                }
+            }
 
             ViewBag.Title = "View " + Name + " data";
             ViewBag.Table = Name;
