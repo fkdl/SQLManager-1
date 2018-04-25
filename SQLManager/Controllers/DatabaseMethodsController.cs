@@ -41,7 +41,8 @@ namespace SQLManager.Controllers
 
                         if (_line[0].Equals("true") && _line[1].Equals("false"))
                         {
-                            if (Extensions.Connection[0].Equals("SQLServer"))
+                            if (Extensions.Connection[0].Equals("SQLServer") ||
+                                Extensions.Connection[0].Equals("MySQL"))
                             {
                                 _cmd += ", ";
                                 _pk.Add(_line[2]);
@@ -61,6 +62,11 @@ namespace SQLManager.Controllers
                             else if (Extensions.Connection[0].Equals("SQLite"))
                             {
                                 _cmd += " PRIMARY KEY AUTOINCREMENT, ";
+                            }
+                            else if (Extensions.Connection[0].Equals("MySQL"))
+                            {
+                                _cmd += " AUTO_INCREMENT, ";
+                                _pk.Add(_line[2]);
                             }
                         }
                         else
@@ -119,6 +125,25 @@ namespace SQLManager.Controllers
                         }
                     }
                 }
+                else if (Extensions.Connection[0].Equals("MySQL"))
+                {
+                    using (var _conn = new MySqlConnection(Extensions.Connection[1]))
+                    {
+                        await _conn.OpenAsync();
+
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+
+                            _Command.CommandText = _cmd;
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -154,6 +179,24 @@ namespace SQLManager.Controllers
                 else if (Extensions.Connection[0].Equals("SQLite"))
                 {
                     using (var _conn = new SqliteConnection(Extensions.Connection[1]))
+                    {
+                        await _conn.OpenAsync();
+
+                        using (var _transaction = _conn.BeginTransaction())
+                        {
+                            var _Command = _conn.CreateCommand();
+                            _Command.Transaction = _transaction;
+                            _Command.CommandText = @"DROP TABLE " + Table;
+
+                            await _Command.ExecuteNonQueryAsync();
+
+                            _transaction.Commit();
+                        }
+                    }
+                }
+                else if (Extensions.Connection[0].Equals("MySQL"))
+                {
+                    using (var _conn = new MySqlConnection(Extensions.Connection[1]))
                     {
                         await _conn.OpenAsync();
 

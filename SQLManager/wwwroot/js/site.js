@@ -223,8 +223,7 @@ function AddField() {
 }
 
 function LineFields() {
-    var _builder = [];
-
+    var _type = '';
     if (document.getElementById('SqlType').value == 'SQLServer') {
         _type = '<datalist id="types">' +
             '<option value="INT">' +
@@ -252,8 +251,21 @@ function LineFields() {
             '<option value="TEXT">' +
             '<option value="BLOB">' +
             '</datalist>';
+    } else if (document.getElementById('SqlType').value == 'MySQL') {
+        _type = '<datalist id="types">' +
+            '<option value="INT">' +
+            '<option value="REAL">' +
+            '<option value="NVARCHAR">' +
+            '<option value="VARCHAR">' +
+            '<option value="DATE">' +
+            '<option value="DATETIME">' +
+            '<option value="TIME">' +
+            '<option value="DECIMAL">' +
+            '<option value="TEXT">' +
+            '</datalist>';
     }
 
+    var _builder = [];
     _builder.push(' <div class="form-group">' +
         '<div class="form-check col-xs-2">' +
         '<input type="checkbox" class="form-check-input" name="PK">' +
