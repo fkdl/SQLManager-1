@@ -23,12 +23,16 @@
                 <div class="panel panel-info" style="border-radius: 0;">
                     <div class="panel-heading" style="border-radius: 0;">
                         @(_table.Key)
+                        <a href="Table/Rename" data-toggle="modal" data-target="#renameTable" title="Rename Table"
+                            onclick="return RenameTableModal('@(_table.Key)')" >
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
                         <div class="pull-right">
                             <a asp-action="Index" asp-controller="Table" asp-route-Name="@(_table.Key)" title="Table data">
                                 <i class="fas fa-search" style="font-size: 110%"></i>
                             </a>
                             <a href="Table/Drop" data-toggle="modal" data-target="#dropTable" title="Remove table"
-                                onclick="return DropTableModal('@(_table.Key)')">
+                                onclick="return DropTableModal('@(_table.Key)')" >
                                 <i class="fas fa-trash-alt" style="font-size: 110%"></i>
                             </a>
                         </div>
@@ -132,6 +136,44 @@
                 </form>
                 
                 <div class="hidden" id="createTableWork">
+                    Working On It...
+                    <div class="fa-3x text-center">
+                        <i class="fas fa-cog fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rename table modal -->
+<div class="modal fade" id="renameTable" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Rename Table</h3>
+            </div>
+            <div class="modal-body">
+                <div id="renameTableError"></div>
+                <form class="form-horizontal" onsubmit="return RenameTable()" id="renameTableForm" autocomplete="off">
+                    <div class="form-header" id="provideNameHeader">
+                        <!-- Populated from javascript -->
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-9">
+                            <input class="form-control" id="tableNewName">
+                        </div>
+                    </div>
+                        
+                    <input type="hidden" id="tableOldName">
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Commit</button>
+                        <a class="btn btn-default" onclick='$("#renameTable").modal("toggle");'>Close</a>
+                    </div>
+                </form>
+                
+                <div class="hidden" id="renameTableWork">
                     Working On It...
                     <div class="fa-3x text-center">
                         <i class="fas fa-cog fa-spin"></i>

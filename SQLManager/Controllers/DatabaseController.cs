@@ -200,7 +200,7 @@ namespace SQLManager.Controllers
                     }
                 }
 
-                ViewBag.Title = Name + " tables";
+                ViewBag.Title = Name.Split(@"%2F").Last() + " tables";
                 ViewBag.Type = Extensions.Connection[0];
 
                 return View(_Columns);

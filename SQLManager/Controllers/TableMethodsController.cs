@@ -78,7 +78,7 @@ namespace SQLManager.Controllers
                     {
                         await _conn.OpenAsync();
 
-                        using (var _transaction = _conn.BeginTransaction())
+                        using (var _transaction = await _conn.BeginTransactionAsync())
                         {
                             var _Command = _conn.CreateCommand();
                             _Command.Transaction = _transaction;
@@ -185,7 +185,7 @@ namespace SQLManager.Controllers
                     {
                         await _conn.OpenAsync();
 
-                        using (var _transaction = _conn.BeginTransaction())
+                        using (var _transaction = await _conn.BeginTransactionAsync())
                         {
                             var _Command = _conn.CreateCommand();
                             _Command.Transaction = _transaction;
@@ -271,7 +271,7 @@ namespace SQLManager.Controllers
                     {
                         await _conn.OpenAsync();
 
-                        using (var _transaction = _conn.BeginTransaction())
+                        using (var _transaction = await _conn.BeginTransactionAsync())
                         {
                             var _Command = _conn.CreateCommand();
                             _Command.Transaction = _transaction;
